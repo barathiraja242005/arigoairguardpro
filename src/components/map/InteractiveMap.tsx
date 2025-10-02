@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useToast } from "@/hooks/use-toast";
 
 // Fix for default marker icons in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -27,12 +28,50 @@ const devices: DeviceLocation[] = [
 const InteractiveMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
+  const userMarker = useRef<L.Marker | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
-    if (!mapContainer.current || map.current) return;
+    // Get user's current location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+          toast({
+            title: "Location Found",
+            description: "Map centered on your current location",
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          toast({
+            title: "Location Access Denied",
+            description: "Using default location. Please enable location permissions.",
+            variant: "destructive",
+          });
+          // Fallback to default location (New York)
+          setUserLocation({ lat: 40.7589, lng: -73.9851 });
+        }
+      );
+    } else {
+      toast({
+        title: "Geolocation Not Supported",
+        description: "Your browser doesn't support geolocation",
+        variant: "destructive",
+      });
+      setUserLocation({ lat: 40.7589, lng: -73.9851 });
+    }
+  }, [toast]);
 
-    // Initialize map centered on New York
-    map.current = L.map(mapContainer.current).setView([40.7589, -73.9851], 13);
+  useEffect(() => {
+    if (!mapContainer.current || map.current || !userLocation) return;
+
+    // Initialize map centered on user's location
+    map.current = L.map(mapContainer.current).setView([userLocation.lat, userLocation.lng], 13);
 
     // Add OpenStreetMap tile layer
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -40,7 +79,51 @@ const InteractiveMap = () => {
       maxZoom: 19,
     }).addTo(map.current);
 
-    // Add device markers
+    // Add user location marker
+    const userIcon = L.divIcon({
+      className: "user-location-marker",
+      html: `
+        <div style="
+          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: 4px solid white;
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+        ">
+          <div style="
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+          "></div>
+        </div>
+        <style>
+          @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+          }
+        </style>
+      `,
+      iconSize: [40, 40],
+      iconAnchor: [20, 20],
+    });
+
+    userMarker.current = L.marker([userLocation.lat, userLocation.lng], { icon: userIcon })
+      .addTo(map.current)
+      .bindPopup(`
+        <div style="text-align: center; padding: 4px;">
+          <strong style="font-size: 14px;">Your Location</strong><br/>
+          <span style="color: #3b82f6; font-size: 12px;">📍 Current Position</span>
+        </div>
+      `);
+
+    // Add device markers (nearby)
     devices.forEach((device) => {
       if (!map.current) return;
 
@@ -118,7 +201,7 @@ const InteractiveMap = () => {
         map.current = null;
       }
     };
-  }, []);
+  }, [userLocation]);
 
   return <div ref={mapContainer} className="w-full h-full rounded-lg" />;
 };
