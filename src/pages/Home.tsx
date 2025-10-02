@@ -15,6 +15,11 @@ import {
   Smartphone,
   Ruler,
   Weight,
+  AlertTriangle,
+  Heart,
+  Users,
+  Linkedin,
+  Mail,
 } from "lucide-react";
 
 const Home = () => {
@@ -242,6 +247,237 @@ const Home = () => {
               </motion.div>
             ))}
           </div>
+        </motion.div>
+      </div>
+
+      {/* Air Pollution Awareness Section */}
+      <div className="bg-muted/30 py-16">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 border border-destructive/20 mb-4">
+                <AlertTriangle className="w-4 h-4 text-destructive" />
+                <span className="text-sm font-medium">Global Health Crisis</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                The Air Pollution Challenge
+              </h2>
+              <p className="text-muted-foreground max-w-3xl mx-auto">
+                Air pollution is one of the greatest environmental threats to human health,
+                affecting billions of people worldwide. Understanding the problem is the first
+                step toward breathing cleaner air.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {[
+                {
+                  stat: "7M+",
+                  label: "Deaths Annually",
+                  description: "Premature deaths caused by air pollution worldwide",
+                  color: "destructive",
+                },
+                {
+                  stat: "91%",
+                  label: "Population Affected",
+                  description: "Of world's population breathes polluted air",
+                  color: "warning",
+                },
+                {
+                  stat: "$8.1T",
+                  label: "Economic Cost",
+                  description: "Annual global cost of air pollution damages",
+                  color: "warning",
+                },
+                {
+                  stat: "99%",
+                  label: "WHO Guideline",
+                  description: "Of cities exceed WHO air quality guidelines",
+                  color: "destructive",
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={item.stat}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Card className="p-6 text-center h-full">
+                    <div className={`text-4xl font-bold mb-2 text-${item.color}`}>
+                      {item.stat}
+                    </div>
+                    <h4 className="font-semibold mb-2">{item.label}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {item.description}
+                    </p>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                {
+                  icon: Heart,
+                  title: "Health Impact",
+                  description: "Air pollution causes respiratory diseases, heart conditions, strokes, and reduces life expectancy significantly.",
+                },
+                {
+                  icon: AlertTriangle,
+                  title: "Major Pollutants",
+                  description: "PM2.5, PM10, CO, NO₂, SO₂, and O₃ are primary air pollutants affecting human health and environment.",
+                },
+                {
+                  icon: Shield,
+                  title: "Our Solution",
+                  description: "AriGo AirGuard Pro provides personal protection with real-time monitoring and advanced 3-stage filtration.",
+                },
+              ].map((info, index) => (
+                <motion.div
+                  key={info.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Card className="p-6 h-full bg-card/50 backdrop-blur-sm">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                      <info.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-2">{info.title}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {info.description}
+                    </p>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Team Section */}
+      <div className="container mx-auto px-4 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
+              <Users className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium">Meet Our Team</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              The Innovators Behind AriGo
+            </h2>
+            <p className="text-muted-foreground max-w-3xl mx-auto">
+              A passionate team of engineers, scientists, and innovators dedicated to
+              creating sustainable solutions for clean air and healthy living.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                name: "Dr. Priya Sharma",
+                role: "Chief Technology Officer",
+                expertise: "Environmental Engineering & IoT",
+                description: "15+ years in air quality monitoring systems",
+                image: "PS",
+              },
+              {
+                name: "Rajesh Kumar",
+                role: "Lead Hardware Engineer",
+                expertise: "Embedded Systems & Sensors",
+                description: "Expert in miniaturization and portable devices",
+                image: "RK",
+              },
+              {
+                name: "Ananya Reddy",
+                role: "Data Scientist",
+                expertise: "AI/ML & Predictive Analytics",
+                description: "Specializes in air quality prediction models",
+                image: "AR",
+              },
+              {
+                name: "Vikram Patel",
+                role: "Product Designer",
+                expertise: "Industrial Design & UX",
+                description: "Award-winning sustainable product design",
+                image: "VP",
+              },
+            ].map((member, index) => (
+              <motion.div
+                key={member.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="p-6 text-center hover:shadow-elevated transition-all h-full group">
+                  <div className="relative mb-4">
+                    <div className="w-24 h-24 rounded-full bg-gradient-primary flex items-center justify-center mx-auto text-3xl font-bold text-white group-hover:scale-110 transition-transform">
+                      {member.image}
+                    </div>
+                  </div>
+                  <h3 className="font-bold text-lg mb-1">{member.name}</h3>
+                  <p className="text-primary font-semibold text-sm mb-2">
+                    {member.role}
+                  </p>
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">
+                    {member.expertise}
+                  </p>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    {member.description}
+                  </p>
+                  <div className="flex justify-center gap-2">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 rounded-full hover:bg-primary/10"
+                    >
+                      <Linkedin className="w-4 h-4 text-primary" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 rounded-full hover:bg-primary/10"
+                    >
+                      <Mail className="w-4 h-4 text-primary" />
+                    </Button>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="text-center mt-12"
+          >
+            <Card className="p-8 bg-muted/50 max-w-3xl mx-auto">
+              <h3 className="text-xl font-bold mb-4">Our Mission</h3>
+              <p className="text-muted-foreground">
+                At AriGo, we believe everyone deserves to breathe clean air. Our mission
+                is to make advanced air purification technology accessible, portable, and
+                sustainable. By combining cutting-edge IoT sensors with eco-friendly
+                design, we're not just filtering air—we're creating a healthier future
+                while giving back to the environment through our innovative
+                pollutant-to-fertilizer conversion technology.
+              </p>
+            </Card>
+          </motion.div>
         </motion.div>
       </div>
 
