@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,10 +22,23 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+// Dummy credentials
+const DUMMY_CREDENTIALS = {
+  deviceId: "ARIGO2024",
+  password: "airguard123"
+};
+
 export default function Login() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const {
     register,
@@ -40,21 +53,25 @@ export default function Login() {
     
     try {
       // Simulate device connection
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Store device credentials (in a real app, this would be secure)
-      localStorage.setItem("deviceId", data.deviceId);
-      
-      toast({
-        title: "Device Connected",
-        description: `Successfully connected to device ${data.deviceId}`,
-      });
-      
-      navigate("/dashboard");
+      if (data.deviceId === DUMMY_CREDENTIALS.deviceId && data.password === DUMMY_CREDENTIALS.password) {
+        localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("deviceId", data.deviceId);
+        
+        toast({
+          title: "Device Connected",
+          description: `Successfully connected to device ${data.deviceId}`,
+        });
+        
+        navigate("/dashboard");
+      } else {
+        throw new Error("Invalid credentials");
+      }
     } catch (error) {
       toast({
         title: "Connection Failed",
-        description: "Unable to connect to device. Please check your credentials.",
+        description: "Invalid device ID or password. Try: ARIGO2024 / airguard123",
         variant: "destructive",
       });
     } finally {
@@ -115,7 +132,13 @@ export default function Login() {
                 )}
               </div>
 
-              <Button 
+              <div className="text-xs text-muted-foreground bg-muted p-3 rounded-md">
+                <strong>Demo Credentials:</strong><br />
+                Device ID: ARIGO2024<br />
+                Password: airguard123
+              </div>
+
+              <Button
                 type="submit" 
                 className="w-full" 
                 disabled={isLoading}

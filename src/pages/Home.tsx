@@ -1,10 +1,15 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment, PerspectiveCamera } from "@react-three/drei";
 import Device3D from "@/components/home/Device3D";
+import { useToast } from "@/hooks/use-toast";
 import {
   Wind,
   Shield,
@@ -20,10 +25,52 @@ import {
   Users,
   Linkedin,
   Mail,
+  LogIn,
+  Lock,
 } from "lucide-react";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [deviceId, setDeviceId] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Dummy credentials
+  const DUMMY_CREDENTIALS = {
+    deviceId: "ARIGO2024",
+    password: "airguard123"
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    if (deviceId === DUMMY_CREDENTIALS.deviceId && password === DUMMY_CREDENTIALS.password) {
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("deviceId", deviceId);
+      
+      toast({
+        title: "Login Successful",
+        description: `Connected to device ${deviceId}`,
+      });
+      
+      setIsLoginOpen(false);
+      navigate("/dashboard");
+    } else {
+      toast({
+        title: "Login Failed",
+        description: "Invalid device ID or password",
+        variant: "destructive",
+      });
+    }
+    
+    setIsLoading(false);
+  };
 
   const specifications = [
     { icon: Ruler, label: "Height", value: "180 mm", detail: "~7.1 inches" },
@@ -102,19 +149,73 @@ const Home = () => {
             </div>
 
             <div className="flex flex-wrap gap-4 mb-8">
-              <Button
-                size="lg"
-                className="bg-gradient-primary hover:opacity-90 text-primary-foreground shadow-glow px-8 group"
-                onClick={() => navigate("/dashboard")}
-              >
-                View Dashboard
-                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    size="lg"
+                    className="bg-gradient-primary hover:opacity-90 text-primary-foreground shadow-glow px-8 group"
+                  >
+                    <LogIn className="mr-2 w-4 h-4" />
+                    Device Login
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Lock className="w-5 h-5 text-primary" />
+                      Connect Your Device
+                    </DialogTitle>
+                    <DialogDescription>
+                      Enter your device credentials to access the dashboard
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleLogin} className="space-y-4 mt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="deviceId">Device ID</Label>
+                      <Input
+                        id="deviceId"
+                        placeholder="Enter device ID"
+                        value={deviceId}
+                        onChange={(e) => setDeviceId(e.target.value)}
+                        disabled={isLoading}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="Enter password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={isLoading}
+                        required
+                      />
+                    </div>
+                    <div className="text-xs text-muted-foreground bg-muted p-3 rounded-md">
+                      <strong>Demo Credentials:</strong><br />
+                      Device ID: ARIGO2024<br />
+                      Password: airguard123
+                    </div>
+                    <Button 
+                      type="submit" 
+                      className="w-full"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Connecting..." : "Connect Device"}
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-2"
-                onClick={() => navigate("/dashboard")}
+                onClick={() => {
+                  const element = document.getElementById('features');
+                  element?.scrollIntoView({ behavior: 'smooth' });
+                }}
               >
                 Learn More
               </Button>
@@ -212,7 +313,7 @@ const Home = () => {
       </div>
 
       {/* Features Section */}
-      <div className="container mx-auto px-4 py-16">
+      <div id="features" className="container mx-auto px-4 py-16">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

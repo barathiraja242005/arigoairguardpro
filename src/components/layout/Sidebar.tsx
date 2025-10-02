@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
@@ -8,7 +9,9 @@ import {
   Settings,
   Shield,
   Wind,
+  LogOut,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -19,7 +22,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
+import { useToast } from "@/hooks/use-toast";
 
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -31,6 +36,22 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [deviceId] = useState(localStorage.getItem("deviceId") || "Unknown");
+
+  const handleSignOut = () => {
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("deviceId");
+    
+    toast({
+      title: "Signed Out",
+      description: "You have been successfully signed out",
+    });
+    
+    navigate("/");
+  };
+
   return (
     <Sidebar className="border-r border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border p-4">
@@ -74,6 +95,21 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="border-t border-sidebar-border p-4">
+        <div className="mb-3">
+          <div className="text-xs text-muted-foreground mb-1">Connected Device</div>
+          <div className="font-medium text-sm">{deviceId}</div>
+        </div>
+        <Button
+          variant="outline"
+          className="w-full justify-start"
+          onClick={handleSignOut}
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          Sign Out
+        </Button>
+      </SidebarFooter>
     </Sidebar>
   );
 }
