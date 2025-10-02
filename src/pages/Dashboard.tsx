@@ -4,6 +4,7 @@ import AQIGauge from "@/components/dashboard/AQIGauge";
 import FilterHealth from "@/components/dashboard/FilterHealth";
 import BatteryStatus from "@/components/dashboard/BatteryStatus";
 import PollutantChart from "@/components/dashboard/PollutantChart";
+import PollutantLevels from "@/components/dashboard/PollutantLevels";
 import ByproductStats from "@/components/dashboard/ByproductStats";
 import { Wind, Droplets, Leaf, Zap } from "lucide-react";
 
@@ -71,6 +72,17 @@ const Dashboard = () => {
               </Card>
             </motion.div>
           ))}
+        </motion.div>
+
+        {/* Pollutant Levels */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-8"
+        >
+          <h2 className="text-2xl font-semibold mb-4">Pollutant Levels</h2>
+          <PollutantLevels />
         </motion.div>
 
         {/* Main Grid */}
