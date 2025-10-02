@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import { MapPin, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
+import InteractiveMap from "@/components/map/InteractiveMap";
 
 const MapView = () => {
   return (
@@ -18,16 +19,8 @@ const MapView = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <Card className="p-6 h-[600px] flex items-center justify-center bg-muted/20">
-            <div className="text-center">
-              <MapPin className="w-16 h-16 text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                Interactive map will be displayed here
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Integration with Mapbox/Leaflet for live AQI heatmaps
-              </p>
-            </div>
+          <Card className="p-0 h-[600px] overflow-hidden">
+            <InteractiveMap />
           </Card>
         </div>
 
