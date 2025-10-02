@@ -33,12 +33,11 @@ const MapView = () => {
 
         <div className="space-y-6">
           <Card className="p-6">
-            <h3 className="font-semibold mb-4">Active Devices</h3>
             <div className="space-y-4">
               {[
-                { name: "Living Room", aqi: 45, status: "Good" },
-                { name: "Bedroom", aqi: 62, status: "Moderate" },
-                { name: "Office", aqi: 38, status: "Good" },
+                { name: "City Park", aqi: 45, status: "Good" },
+                { name: "Main Street", aqi: 62, status: "Moderate" },
+                { name: "Shopping Mall", aqi: 38, status: "Good" },
               ].map((device, index) => (
                 <motion.div
                   key={device.name}
@@ -85,7 +84,7 @@ const MapView = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Best Location</span>
-                <span className="font-semibold">Office</span>
+                <span className="font-semibold">Shopping Mall</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Active Devices</span>
