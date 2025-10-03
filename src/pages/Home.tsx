@@ -212,6 +212,14 @@ const Home = () => {
                 size="lg"
                 variant="outline"
                 className="border-2"
+                onClick={() => navigate("/admin-login")}
+              >
+                Admin Login
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-2"
                 onClick={() => {
                   const element = document.getElementById('features');
                   element?.scrollIntoView({ behavior: 'smooth' });

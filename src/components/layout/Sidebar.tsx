@@ -7,7 +7,6 @@ import {
   Sliders,
   Bell,
   Settings,
-  Shield,
   Wind,
   LogOut,
 } from "lucide-react";
@@ -32,7 +31,6 @@ const menuItems = [
   { title: "Controls", url: "/controls", icon: Sliders },
   { title: "Alerts", url: "/alerts", icon: Bell },
   { title: "Settings", url: "/settings", icon: Settings },
-  { title: "Admin Panel", url: "/admin", icon: Shield },
 ];
 
 export function AppSidebar() {
