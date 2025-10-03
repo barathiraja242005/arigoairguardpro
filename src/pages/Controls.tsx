@@ -1,16 +1,27 @@
 import { motion } from "framer-motion";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
-import { Power, Fan, Moon, Zap } from "lucide-react";
+import { Power, Fan, Moon, Zap, Bell, Calendar, Leaf, Settings, Wind } from "lucide-react";
 import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 const Controls = () => {
   const [isPowerOn, setIsPowerOn] = useState(true);
   const [fanSpeed, setFanSpeed] = useState([3]);
   const [autoMode, setAutoMode] = useState(true);
   const [silentMode, setSilentMode] = useState(false);
+  const [isSchedulingOn, setIsSchedulingOn] = useState(false);
+  const [startTime, setStartTime] = useState("22:00");
+  const [endTime, setEndTime] = useState("06:00");
+  const [notifications, setNotifications] = useState(true);
+  const [notificationType, setNotificationType] = useState("push");
+  const [ecoMode, setEcoMode] = useState(false);
 
   const handlePowerToggle = () => {
     setIsPowerOn(!isPowerOn);
@@ -27,192 +38,147 @@ const Controls = () => {
     toast.success(silentMode ? "Silent mode off" : "Silent mode on");
   };
 
+  const handleSchedulingToggle = () => {
+    setIsSchedulingOn(!isSchedulingOn);
+    toast.success(isSchedulingOn ? "Scheduling disabled" : "Scheduling enabled");
+  };
+
+  const handleNotificationsToggle = () => {
+    setNotifications(!notifications);
+    toast.success(notifications ? "Notifications disabled" : "Notifications enabled");
+  };
+  
+  const handleEcoModeToggle = () => {
+    setEcoMode(!ecoMode);
+    toast.success(ecoMode ? "Eco mode disabled" : "Eco mode enabled");
+  };
+
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-4 sm:p-8">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-4xl font-bold mb-2">Device Controls</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-2">Device Controls</h1>
         <p className="text-muted-foreground">
-          Remote control and configuration
+          Remote control and configuration for your device.
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl">
-        {/* Power Control */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1 }}
-        >
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className={`p-3 rounded-xl ${isPowerOn ? 'bg-primary/20' : 'bg-muted'}`}>
-                  <Power className={`w-6 h-6 ${isPowerOn ? 'text-primary' : 'text-muted-foreground'}`} />
-                </div>
-                <div>
-                  <h3 className="font-semibold">Power</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {isPowerOn ? "Device is ON" : "Device is OFF"}
-                  </p>
-                </div>
-              </div>
-              <Switch checked={isPowerOn} onCheckedChange={handlePowerToggle} />
-            </div>
-            {isPowerOn && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="p-4 rounded-lg bg-primary/10 border border-primary/20"
-              >
-                <p className="text-sm text-center animate-pulse-glow">
-                  Device Running
-                </p>
-              </motion.div>
-            )}
-          </Card>
-        </motion.div>
+      <Card className="max-w-4xl mx-auto">
+        <Tabs defaultValue="general">
+          <CardHeader className="border-b">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
+              <TabsTrigger value="general"><Settings className="w-4 h-4 mr-2"/> General</TabsTrigger>
+              <TabsTrigger value="modes"><Wind className="w-4 h-4 mr-2"/> Modes</TabsTrigger>
+              <TabsTrigger value="scheduling"><Calendar className="w-4 h-4 mr-2"/> Scheduling</TabsTrigger>
+              <TabsTrigger value="notifications"><Bell className="w-4 h-4 mr-2"/> Notifications</TabsTrigger>
+            </TabsList>
+          </CardHeader>
 
-        {/* Fan Speed Control */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card className="p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 rounded-xl bg-secondary/20">
-                <motion.div
-                  animate={{ rotate: fanSpeed[0] * 72 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Fan className="w-6 h-6 text-secondary" />
-                </motion.div>
+          <CardContent className="pt-6">
+            <TabsContent value="general">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
+                  <Label htmlFor="power-switch" className="flex items-center gap-4">
+                    <Power className={`w-6 h-6 ${isPowerOn ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <span className="text-lg font-medium">Device Power</span>
+                  </Label>
+                  <Switch id="power-switch" checked={isPowerOn} onCheckedChange={handlePowerToggle} />
+                </div>
+                <div className="p-4 rounded-lg bg-muted/30">
+                  <Label htmlFor="fan-speed-slider" className="flex items-center gap-4 mb-4">
+                    <Fan className="w-6 h-6 text-secondary" />
+                    <span className="text-lg font-medium">Fan Speed</span>
+                  </Label>
+                  <div className="flex items-center gap-4">
+                    <Slider id="fan-speed-slider" value={fanSpeed} onValueChange={setFanSpeed} max={5} min={1} step={1} />
+                    <span className="font-bold text-lg w-12 text-center">{fanSpeed[0]}</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold">Fan Speed</h3>
-                <p className="text-sm text-muted-foreground">Level {fanSpeed[0]}</p>
-              </div>
-            </div>
-            <Slider
-              value={fanSpeed}
-              onValueChange={setFanSpeed}
-              max={5}
-              min={1}
-              step={1}
-              className="mb-4"
-            />
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Low</span>
-              <span>Medium</span>
-              <span>High</span>
-            </div>
-          </Card>
-        </motion.div>
+            </TabsContent>
 
-        {/* Auto Mode */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className={`p-3 rounded-xl ${autoMode ? 'bg-accent/20' : 'bg-muted'}`}>
-                  <Zap className={`w-6 h-6 ${autoMode ? 'text-accent' : 'text-muted-foreground'}`} />
+            <TabsContent value="modes">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
+                  <Label htmlFor="auto-mode-switch" className="flex items-center gap-4">
+                    <Zap className={`w-6 h-6 ${autoMode ? 'text-accent' : 'text-muted-foreground'}`} />
+                    <span className="text-lg font-medium">Auto Mode</span>
+                  </Label>
+                  <Switch id="auto-mode-switch" checked={autoMode} onCheckedChange={handleAutoModeToggle} />
                 </div>
-                <div>
-                  <h3 className="font-semibold">Auto Mode</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {autoMode ? "Adaptive ON" : "Manual Mode"}
-                  </p>
+                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
+                  <Label htmlFor="silent-mode-switch" className="flex items-center gap-4">
+                    <Moon className={`w-6 h-6 ${silentMode ? 'text-foreground' : 'text-muted-foreground'}`} />
+                    <span className="text-lg font-medium">Silent Mode</span>
+                  </Label>
+                  <Switch id="silent-mode-switch" checked={silentMode} onCheckedChange={handleSilentModeToggle} />
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
+                  <Label htmlFor="eco-mode-switch" className="flex items-center gap-4">
+                    <Leaf className={`w-6 h-6 ${ecoMode ? 'text-green-500' : 'text-muted-foreground'}`} />
+                    <span className="text-lg font-medium">Eco Mode</span>
+                  </Label>
+                  <Switch id="eco-mode-switch" checked={ecoMode} onCheckedChange={handleEcoModeToggle} />
                 </div>
               </div>
-              <Switch checked={autoMode} onCheckedChange={handleAutoModeToggle} />
-            </div>
-            {autoMode && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="p-4 rounded-lg bg-accent/10 border border-accent/20"
-              >
-                <p className="text-sm text-center">
-                  Smart mode active - adjusting based on AQI
-                </p>
-              </motion.div>
-            )}
-          </Card>
-        </motion.div>
+            </TabsContent>
 
-        {/* Silent Mode */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className={`p-3 rounded-xl ${silentMode ? 'bg-muted' : 'bg-muted'}`}>
-                  <Moon className={`w-6 h-6 ${silentMode ? 'text-foreground' : 'text-muted-foreground'}`} />
+            <TabsContent value="scheduling">
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
+                        <Label htmlFor="scheduling-switch" className="flex items-center gap-4">
+                            <Calendar className={`w-6 h-6 ${isSchedulingOn ? 'text-purple-500' : 'text-muted-foreground'}`} />
+                            <span className="text-lg font-medium">Enable Scheduling</span>
+                        </Label>
+                        <Switch id="scheduling-switch" checked={isSchedulingOn} onCheckedChange={handleSchedulingToggle} />
+                    </div>
+                    {isSchedulingOn && (
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="grid sm:grid-cols-2 gap-6 p-4 rounded-lg bg-muted/30">
+                        <div>
+                            <Label htmlFor="start-time" className="mb-2 block">Start Time</Label>
+                            <Input id="start-time" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+                        </div>
+                        <div>
+                            <Label htmlFor="end-time" className="mb-2 block">End Time</Label>
+                            <Input id="end-time" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+                        </div>
+                    </motion.div>
+                    )}
                 </div>
-                <div>
-                  <h3 className="font-semibold">Silent Mode</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {silentMode ? "Night mode ON" : "Normal operation"}
-                  </p>
-                </div>
-              </div>
-              <Switch checked={silentMode} onCheckedChange={handleSilentModeToggle} />
-            </div>
-            {silentMode && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="p-4 rounded-lg bg-muted border border-border"
-              >
-                <p className="text-sm text-center">
-                  Quiet operation - reduced fan noise
-                </p>
-              </motion.div>
-            )}
-          </Card>
-        </motion.div>
+            </TabsContent>
 
-        {/* Status Summary */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5 }}
-          className="md:col-span-2"
-        >
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4">Current Status</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-4 rounded-lg bg-muted/50">
-                <p className="text-sm text-muted-foreground mb-1">Power</p>
-                <p className="font-semibold">{isPowerOn ? "ON" : "OFF"}</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted/50">
-                <p className="text-sm text-muted-foreground mb-1">Fan Speed</p>
-                <p className="font-semibold">Level {fanSpeed[0]}</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted/50">
-                <p className="text-sm text-muted-foreground mb-1">Mode</p>
-                <p className="font-semibold">{autoMode ? "Auto" : "Manual"}</p>
-              </div>
-              <div className="p-4 rounded-lg bg-muted/50">
-                <p className="text-sm text-muted-foreground mb-1">Noise Level</p>
-                <p className="font-semibold">{silentMode ? "Silent" : "Normal"}</p>
-              </div>
-            </div>
-          </Card>
-        </motion.div>
-      </div>
+            <TabsContent value="notifications">
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30">
+                        <Label htmlFor="notifications-switch" className="flex items-center gap-4">
+                            <Bell className={`w-6 h-6 ${notifications ? 'text-blue-500' : 'text-muted-foreground'}`} />
+                            <span className="text-lg font-medium">Enable Notifications</span>
+                        </Label>
+                        <Switch id="notifications-switch" checked={notifications} onCheckedChange={handleNotificationsToggle} />
+                    </div>
+                    {notifications && (
+                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-4 rounded-lg bg-muted/30">
+                            <Label className="mb-2 block">Notification Type</Label>
+                            <Select value={notificationType} onValueChange={setNotificationType}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="push">Push Notification</SelectItem>
+                                    <SelectItem value="email">Email</SelectItem>
+                                    <SelectItem value="sms">SMS</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </motion.div>
+                    )}
+                </div>
+            </TabsContent>
+          </CardContent>
+        </Tabs>
+      </Card>
     </div>
   );
 };
