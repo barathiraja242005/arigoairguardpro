@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import { TrendingUp, MapPin } from "lucide-react";
+import { TrendingUp, MapPin, Navigation } from "lucide-react";
 import InteractiveMap, { calculateAQI } from "@/components/map/InteractiveMap";
 import { useState, useEffect } from "react";
 
@@ -15,6 +15,15 @@ const MapView = () => {
   const [nearbyLocations, setNearbyLocations] = useState<NearbyLocation[]>([]);
   const [avgAQI, setAvgAQI] = useState(0);
   const [bestLocation, setBestLocation] = useState("Loading...");
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+
+  const handleLocationClick = (locationName: string) => {
+    setSelectedLocation(locationName);
+    // Call the global function to select location on map
+    if ((window as any).selectMapLocation) {
+      (window as any).selectMapLocation(locationName);
+    }
+  };
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -136,18 +145,28 @@ const MapView = () => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="p-4 rounded-lg border border-border hover:shadow-card transition-shadow"
+                  onClick={() => handleLocationClick(location.name)}
+                  className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                    selectedLocation === location.name
+                      ? "border-primary bg-primary/10 shadow-lg scale-105"
+                      : "border-border hover:border-primary/50 hover:shadow-card hover:scale-102"
+                  }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-sm">{location.name}</span>
-                    <span className="text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2 flex-1">
+                      <Navigation className={`w-4 h-4 transition-colors ${
+                        selectedLocation === location.name ? "text-primary" : "text-muted-foreground"
+                      }`} />
+                      <span className="font-medium text-sm">{location.name}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground px-2 py-1 rounded-full bg-muted">
                       {location.status}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                       <div
-                        className={`h-full ${
+                        className={`h-full transition-all ${
                           location.aqi <= 50
                             ? "bg-aqi-good"
                             : location.aqi <= 100
@@ -157,8 +176,18 @@ const MapView = () => {
                         style={{ width: `${(location.aqi / 200) * 100}%` }}
                       />
                     </div>
-                    <span className="text-sm font-semibold">{location.aqi}</span>
+                    <span className="text-sm font-semibold min-w-[40px] text-right">{location.aqi}</span>
                   </div>
+                  {selectedLocation === location.name && (
+                    <motion.p
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="text-xs text-primary mt-2 flex items-center gap-1"
+                    >
+                      <MapPin className="w-3 h-3" />
+                      Click on map marker for details
+                    </motion.p>
+                  )}
                 </motion.div>
               )) : (
                 <div className="text-center text-muted-foreground py-8">

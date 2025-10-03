@@ -20,6 +20,10 @@ interface AQILocation {
   pm10?: number;
 }
 
+interface InteractiveMapProps {
+  onLocationSelect?: (location: AQILocation) => void;
+}
+
 export const calculateAQI = (pm25?: number, pm10?: number): number => {
   if (!pm25 && !pm10) return 0;
   
@@ -42,13 +46,36 @@ const getAQIStatus = (aqi: number): string => {
   return "Hazardous";
 };
 
-const InteractiveMap = () => {
+const InteractiveMap = ({ onLocationSelect }: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const userMarker = useRef<L.Marker | null>(null);
+  const markers = useRef<Map<string, L.Marker>>(new Map());
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [nearbyLocations, setNearbyLocations] = useState<AQILocation[]>([]);
   const { toast } = useToast();
+
+  // Expose method to select location
+  useEffect(() => {
+    if (onLocationSelect && nearbyLocations.length > 0) {
+      (window as any).selectMapLocation = (locationName: string) => {
+        const location = nearbyLocations.find(loc => loc.name === locationName);
+        if (location && map.current) {
+          // Center map on location
+          map.current.setView([location.lat, location.lng], 15, {
+            animate: true,
+            duration: 1
+          });
+          
+          // Open popup for this marker
+          const marker = markers.current.get(locationName);
+          if (marker) {
+            marker.openPopup();
+          }
+        }
+      };
+    }
+  }, [nearbyLocations, onLocationSelect]);
 
   useEffect(() => {
     // Get user's current location
@@ -260,7 +287,12 @@ const InteractiveMap = () => {
             font-weight: bold;
             color: white;
             font-size: 11px;
-          ">
+            cursor: pointer;
+            transition: transform 0.2s;
+          "
+          onmouseover="this.style.transform='scale(1.1)'"
+          onmouseout="this.style.transform='scale(1)'"
+          >
             ${location.aqi}
           </div>
         `,
@@ -270,6 +302,9 @@ const InteractiveMap = () => {
 
       const marker = L.marker([location.lat, location.lng], { icon: customIcon }).addTo(map.current);
 
+      // Store marker reference
+      markers.current.set(location.name, marker);
+
       // Add popup with detailed info
       marker.bindPopup(`
         <div style="text-align: center; padding: 6px; min-width: 180px;">
@@ -278,6 +313,8 @@ const InteractiveMap = () => {
           <span style="color: #666; font-size: 12px; font-weight: 500;">${status}</span>
           ${location.pm25 ? `<br/><span style="font-size: 11px; color: #888;">PM2.5: ${location.pm25.toFixed(1)} µg/m³</span>` : ''}
           ${location.pm10 ? `<br/><span style="font-size: 11px; color: #888;">PM10: ${location.pm10.toFixed(1)} µg/m³</span>` : ''}
+          <br/><br/>
+          <span style="font-size: 10px; color: #999;">📍 ${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}</span>
         </div>
       `);
     });
