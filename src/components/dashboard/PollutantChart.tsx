@@ -1,5 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { motion } from "framer-motion";
+import { CheckCircle, AlertTriangle } from "lucide-react";
 
 const PollutantChart = () => {
   const data = [
@@ -61,14 +62,20 @@ const PollutantChart = () => {
         </BarChart>
       </ResponsiveContainer>
 
-      <div className="mt-4 grid grid-cols-2 gap-4">
-        <div className="p-3 rounded-lg bg-aqi-good/10 border border-aqi-good/20">
-          <div className="text-xs text-muted-foreground mb-1">Within Safe Limits</div>
-          <div className="text-sm font-semibold">5 of 7 pollutants</div>
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center gap-4">
+          <CheckCircle className="w-8 h-8 text-green-500" />
+          <div>
+            <p className="font-semibold text-lg">Within Safe Limits</p>
+            <p className="text-sm text-muted-foreground">5 of 7 pollutants</p>
+          </div>
         </div>
-        <div className="p-3 rounded-lg bg-aqi-moderate/10 border border-aqi-moderate/20">
-          <div className="text-xs text-muted-foreground mb-1">Needs Attention</div>
-          <div className="text-sm font-semibold">2 pollutants</div>
+        <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center gap-4">
+          <AlertTriangle className="w-8 h-8 text-yellow-500" />
+          <div>
+            <p className="font-semibold text-lg">Needs Attention</p>
+            <p className="text-sm text-muted-foreground">2 pollutants</p>
+          </div>
         </div>
       </div>
     </motion.div>
