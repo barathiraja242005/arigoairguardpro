@@ -3,6 +3,11 @@ import { Card } from "@/components/ui/card";
 import { TrendingUp, MapPin, Navigation } from "lucide-react";
 import InteractiveMap, { calculateAQI } from "@/components/map/InteractiveMap";
 import { useState, useEffect } from "react";
+import { MetroCitiesGrid } from "@/components/aqi/MetroCitiesGrid";
+import { MajorPollutants } from "@/components/aqi/MajorPollutants";
+import { HistoricalTrends } from "@/components/aqi/HistoricalTrends";
+import { MostPollutedCities } from "@/components/aqi/MostPollutedCities";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface NearbyLocation {
   name: string;
@@ -113,111 +118,140 @@ const MapView = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="mb-8 text-center"
       >
-        <h1 className="text-4xl font-bold mb-2">Map View</h1>
+        <h1 className="text-4xl font-bold mb-2">Air Quality Index Dashboard</h1>
         <p className="text-muted-foreground">
-          Real-time AQI monitoring stations near you
+          Real-time air quality monitoring across India
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <Card className="p-0 h-[600px] overflow-hidden">
-            <InteractiveMap />
-          </Card>
-        </div>
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Metro Cities Grid */}
+        <MetroCitiesGrid />
 
-        <div className="space-y-6">
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4 flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-primary" />
-              Nearby Stations
-            </h3>
-            <div className="space-y-4">
-              {nearbyLocations.length > 0 ? nearbyLocations.map((location, index) => (
-                <motion.div
-                  key={location.name}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  onClick={() => handleLocationClick(location.name)}
-                  className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
-                    selectedLocation === location.name
-                      ? "border-primary bg-primary/10 shadow-lg scale-105"
-                      : "border-border hover:border-primary/50 hover:shadow-card hover:scale-102"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2 flex-1">
-                      <Navigation className={`w-4 h-4 transition-colors ${
-                        selectedLocation === location.name ? "text-primary" : "text-muted-foreground"
-                      }`} />
-                      <span className="font-medium text-sm">{location.name}</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground px-2 py-1 rounded-full bg-muted">
-                      {location.status}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                      <div
-                        className={`h-full transition-all ${
-                          location.aqi <= 50
-                            ? "bg-aqi-good"
-                            : location.aqi <= 100
-                            ? "bg-aqi-moderate"
-                            : "bg-aqi-hazardous"
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="map" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="map">Map View</TabsTrigger>
+            <TabsTrigger value="pollutants">Pollutants</TabsTrigger>
+            <TabsTrigger value="trends">Trends</TabsTrigger>
+            <TabsTrigger value="rankings">Rankings</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="map" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <Card className="p-0 h-[600px] overflow-hidden">
+                  <InteractiveMap />
+                </Card>
+              </div>
+
+              <div className="space-y-6">
+                <Card className="p-6">
+                  <h3 className="font-semibold mb-4 flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    Nearby Stations
+                  </h3>
+                  <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                    {nearbyLocations.length > 0 ? nearbyLocations.map((location, index) => (
+                      <motion.div
+                        key={location.name}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        onClick={() => handleLocationClick(location.name)}
+                        className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                          selectedLocation === location.name
+                            ? "border-primary bg-primary/10 shadow-lg scale-105"
+                            : "border-border hover:border-primary/50 hover:shadow-card hover:scale-102"
                         }`}
-                        style={{ width: `${(location.aqi / 200) * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-sm font-semibold min-w-[40px] text-right">{location.aqi}</span>
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2 flex-1">
+                            <Navigation className={`w-4 h-4 transition-colors ${
+                              selectedLocation === location.name ? "text-primary" : "text-muted-foreground"
+                            }`} />
+                            <span className="font-medium text-sm">{location.name}</span>
+                          </div>
+                          <span className="text-xs text-muted-foreground px-2 py-1 rounded-full bg-muted">
+                            {location.status}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className={`h-full transition-all ${
+                                location.aqi <= 50
+                                  ? "bg-aqi-good"
+                                  : location.aqi <= 100
+                                  ? "bg-aqi-moderate"
+                                  : "bg-aqi-hazardous"
+                              }`}
+                              style={{ width: `${(location.aqi / 200) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-sm font-semibold min-w-[40px] text-right">{location.aqi}</span>
+                        </div>
+                        {selectedLocation === location.name && (
+                          <motion.p
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            className="text-xs text-primary mt-2 flex items-center gap-1"
+                          >
+                            <MapPin className="w-3 h-3" />
+                            Click on map marker for details
+                          </motion.p>
+                        )}
+                      </motion.div>
+                    )) : (
+                      <div className="text-center text-muted-foreground py-8">
+                        <p className="text-sm">Loading nearby stations...</p>
+                      </div>
+                    )}
                   </div>
-                  {selectedLocation === location.name && (
-                    <motion.p
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      className="text-xs text-primary mt-2 flex items-center gap-1"
-                    >
-                      <MapPin className="w-3 h-3" />
-                      Click on map marker for details
-                    </motion.p>
-                  )}
-                </motion.div>
-              )) : (
-                <div className="text-center text-muted-foreground py-8">
-                  <p className="text-sm">Loading nearby stations...</p>
-                </div>
-              )}
-            </div>
-          </Card>
+                </Card>
 
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-primary" />
-              Area Statistics
-            </h3>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Average AQI</span>
-                <span className="font-semibold">{avgAQI || "..."}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Best Location</span>
-                <span className="font-semibold text-xs">{bestLocation}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Stations Found</span>
-                <span className="font-semibold">{nearbyLocations.length}</span>
+                <Card className="p-6">
+                  <h3 className="font-semibold mb-4 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-primary" />
+                    Area Statistics
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Average AQI</span>
+                      <span className="font-semibold">{avgAQI || "..."}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Best Location</span>
+                      <span className="font-semibold text-xs">{bestLocation}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Stations Found</span>
+                      <span className="font-semibold">{nearbyLocations.length}</span>
+                    </div>
+                  </div>
+                </Card>
               </div>
             </div>
-          </Card>
-        </div>
+          </TabsContent>
+
+          <TabsContent value="pollutants" className="mt-6">
+            <MajorPollutants />
+          </TabsContent>
+
+          <TabsContent value="trends" className="mt-6">
+            <HistoricalTrends />
+          </TabsContent>
+
+          <TabsContent value="rankings" className="mt-6">
+            <MostPollutedCities />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
