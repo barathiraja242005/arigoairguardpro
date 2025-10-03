@@ -5,17 +5,41 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { User, Bell, Smartphone, Moon, Sun } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 const Settings = () => {
+  const [name, setName] = useState("John Doe");
+  const [email, setEmail] = useState("john@example.com");
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(false);
   const [appNotifications, setAppNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const [isPairing, setIsPairing] = useState(false);
+
+  useEffect(() => {
+    // Send notifications when enabled
+    if (emailNotifications) {
+      // Simulate sending email notification
+      console.log("Email notifications enabled for:", "barathiraja242005@gmail.com");
+    }
+  }, [emailNotifications]);
 
   const handleSave = () => {
+    // Save profile information
+    localStorage.setItem("userName", name);
+    localStorage.setItem("userEmail", email);
     toast.success("Settings saved successfully!");
+  };
+
+  const handlePairDevice = async () => {
+    setIsPairing(true);
+    // Simulate device pairing
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsPairing(false);
+    toast.success("New device paired successfully!", {
+      description: "Device AG-PRO-12348 has been connected"
+    });
   };
 
   return (
@@ -50,7 +74,8 @@ const Settings = () => {
                   <Input
                     id="name"
                     placeholder="John Doe"
-                    defaultValue="John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="mt-2"
                   />
                 </div>
@@ -60,7 +85,8 @@ const Settings = () => {
                     id="email"
                     type="email"
                     placeholder="john@example.com"
-                    defaultValue="john@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="mt-2"
                   />
                 </div>
@@ -95,12 +121,15 @@ const Settings = () => {
                 <div>
                   <p className="font-medium">Email Notifications</p>
                   <p className="text-sm text-muted-foreground">
-                    Receive alerts via email
+                    Alerts sent to: barathiraja242005@gmail.com
                   </p>
                 </div>
                 <Switch
                   checked={emailNotifications}
-                  onCheckedChange={setEmailNotifications}
+                  onCheckedChange={(checked) => {
+                    setEmailNotifications(checked);
+                    toast.success(checked ? "Email notifications enabled" : "Email notifications disabled");
+                  }}
                 />
               </div>
               <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
@@ -157,8 +186,13 @@ const Settings = () => {
                   Last Sync: {new Date().toLocaleString()}
                 </p>
               </div>
-              <Button variant="outline" className="w-full">
-                Pair New Device
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                onClick={handlePairDevice}
+                disabled={isPairing}
+              >
+                {isPairing ? "Pairing..." : "Pair New Device"}
               </Button>
             </div>
           </Card>

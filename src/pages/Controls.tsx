@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
-import { Power, Wind, Moon, Zap } from "lucide-react";
+import { Power, Fan, Moon, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 const Controls = () => {
@@ -89,7 +89,7 @@ const Controls = () => {
                   animate={{ rotate: fanSpeed[0] * 72 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Wind className="w-6 h-6 text-secondary" />
+                  <Fan className="w-6 h-6 text-secondary" />
                 </motion.div>
               </div>
               <div className="flex-1">

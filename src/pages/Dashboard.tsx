@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import AQIGauge from "@/components/dashboard/AQIGauge";
 import FilterHealth from "@/components/dashboard/FilterHealth";
-import BatteryStatus from "@/components/dashboard/BatteryStatus";
+import FluctuatingBatteryStatus from "@/components/dashboard/FluctuatingBatteryStatus";
 import PollutantChart from "@/components/dashboard/PollutantChart";
-import PollutantLevels from "@/components/dashboard/PollutantLevels";
+import FluctuatingPollutantLevels from "@/components/dashboard/FluctuatingPollutantLevels";
 import ByproductStats from "@/components/dashboard/ByproductStats";
 import { Wind, Droplets, Leaf, Zap } from "lucide-react";
 
@@ -82,7 +82,7 @@ const Dashboard = () => {
           className="mb-8"
         >
           <h2 className="text-2xl font-semibold mb-4">Pollutant Levels</h2>
-          <PollutantLevels />
+          <FluctuatingPollutantLevels />
         </motion.div>
 
         {/* Main Grid */}
@@ -104,7 +104,7 @@ const Dashboard = () => {
           <motion.div variants={cardVariants} className="space-y-6">
             <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">Battery Status</h2>
-              <BatteryStatus percentage={78} />
+              <FluctuatingBatteryStatus basePercentage={78} />
             </Card>
             <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">Filter Health</h2>

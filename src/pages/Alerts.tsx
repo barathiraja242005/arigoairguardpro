@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AlertCircle, AlertTriangle, Info, X } from "lucide-react";
+import { toast } from "sonner";
 
 interface Alert {
   id: number;
@@ -70,8 +71,23 @@ const Alerts = () => {
     }
   };
 
+  useEffect(() => {
+    // Show toast notifications for new alerts
+    alerts.forEach((alert) => {
+      const config = getAlertConfig(alert.type);
+      if (alert.type === "error") {
+        toast.error(alert.title, { description: alert.message });
+      } else if (alert.type === "warning") {
+        toast.warning(alert.title, { description: alert.message });
+      } else {
+        toast.info(alert.title, { description: alert.message });
+      }
+    });
+  }, []);
+
   const dismissAlert = (id: number) => {
     setAlerts(alerts.filter((alert) => alert.id !== id));
+    toast.success("Alert dismissed");
   };
 
   return (
