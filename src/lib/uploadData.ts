@@ -1,5 +1,6 @@
 import { database } from './firebase';
 import { ref, set } from 'firebase/database';
+import { toast } from 'sonner';
 
 // Helper to generate a new data point with random values
 const addDataPoint = () => {
@@ -28,6 +29,10 @@ const addDataPoint = () => {
     })
     .catch((error) => {
       console.error('Error adding data point: ', error);
+      toast.error("Error sending data to Firebase", {
+        description: error.message,
+      });
+      stopFluctuation(); // Stop trying if there is an error
     });
 };
 
@@ -36,20 +41,29 @@ let fluctuationInterval: any = null;
 // Starts sending data to Firebase every 3 seconds
 export const startFluctuation = () => {
   if (fluctuationInterval) {
-    console.log("Fluctuation is already running.");
+    toast.info("Fluctuation is already running.");
     return;
   }
-  console.log("Starting data fluctuation...");
+  toast.success("Starting data fluctuation...");
   fluctuationInterval = setInterval(addDataPoint, 3000);
 };
 
 // Stops sending data to Firebase
 export const stopFluctuation = () => {
   if (fluctuationInterval) {
-    console.log("Stopping data fluctuation.");
+    toast.success("Stopping data fluctuation.");
     clearInterval(fluctuationInterval);
     fluctuationInterval = null;
   } else {
-    console.log("Fluctuation is not running.");
+    toast.info("Fluctuation is not running.");
   }
 };
+
+// Vite-specific Hot Module Replacement (HMR) cleanup
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    if (fluctuationInterval) {
+      clearInterval(fluctuationInterval);
+    }
+  });
+}
