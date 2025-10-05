@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -27,6 +27,8 @@ import {
   Mail,
   LogIn,
   Lock,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 const Home = () => {
@@ -36,6 +38,20 @@ const Home = () => {
   const [deviceId, setDeviceId] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    return savedMode === "true";
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("darkMode", "true");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("darkMode", "false");
+    }
+  }, [darkMode]);
 
   // Dummy credentials
   const DUMMY_CREDENTIALS = {
@@ -73,10 +89,10 @@ const Home = () => {
   };
 
   const specifications = [
-    { icon: Ruler, label: "Height", value: "180 mm", detail: "~7.1 inches" },
-    { icon: Ruler, label: "Width", value: "80 mm", detail: "~3.1 inches" },
-    { icon: Ruler, label: "Depth", value: "60 mm", detail: "~2.4 inches" },
-    { icon: Weight, label: "Weight", value: "450-500 g", detail: "Lightweight" },
+    { icon: Ruler, label: "Height", value: "17 cm", detail: "~6.69 inches" },
+    { icon: Ruler, label: "Width", value: "7 cm", detail: "~2.7 inches" },
+    { icon: Ruler, label: "Depth", value: "5 cm", detail: "~1.97 inches" },
+    { icon: Weight, label: "Weight", value: "512 g", detail: "Lightweight" },
   ];
 
   const features = [
@@ -113,7 +129,18 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5 dark:from-gray-900 dark:via-gray-800/20 dark:to-gray-900/20">
+      <div className="absolute top-4 right-4">
+        <Button
+          size="icon"
+          variant="outline"
+          onClick={() => setDarkMode(!darkMode)}
+          className="rounded-full"
+        >
+          {darkMode ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
+        </Button>
+      </div>
+
       {/* Hero Section */}
       <div className="container mx-auto px-4 pt-20 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -360,7 +387,7 @@ const Home = () => {
       </div>
 
       {/* Air Pollution Awareness Section */}
-      <div className="bg-muted/30 py-16">
+      <div className="bg-muted/30 dark:bg-gray-800/30 py-16">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -496,32 +523,46 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                name: "Dr. Priya Sharma",
-                role: "Chief Technology Officer",
-                expertise: "Environmental Engineering & IoT",
-                description: "15+ years in air quality monitoring systems",
-                image: "PS",
+                name: "Koundar Barathiraja Sudhakar",
+                role: "Project Lead",
+                expertise: "3D Modeling & IoT Systems",
+                description: "An IoT Developer and 3D Modeler with expertise in embedded systems, sensor integration, and product visualization. Passionate about creating intelligent, scalable IoT solutions with precision-crafted 3D designs",
+                image: "B",
               },
               {
-                name: "Rajesh Kumar",
-                role: "Lead Hardware Engineer",
-                expertise: "Embedded Systems & Sensors",
-                description: "Expert in miniaturization and portable devices",
-                image: "RK",
+                name: "Gowtham A",
+                role: "Android App Developer, UI/UX Designer",
+                expertise: "App development & User Experience",
+                description: "An Android app developer and UI/UX designer who focuses on building smart, responsive, and visually appealing apps that truly make a difference for users.",
+                image: "G",
               },
               {
-                name: "Ananya Reddy",
-                role: "Data Scientist",
-                expertise: "AI/ML & Predictive Analytics",
-                description: "Specializes in air quality prediction models",
-                image: "AR",
+                name: "Harini M",
+                role: "Web Developer, UI/UX Designer",
+                expertise: "Frontend Development",
+                description: "A skilled web developer and UI/UX designer dedicated to creating intuitive, responsive, and visually engaging websites that deliver seamless user experiences and drive meaningful impact.",
+                image: "H",
               },
               {
-                name: "Vikram Patel",
+                name: "velan V",
+                role: "Web Developer",
+                expertise: "Frontend Development",
+                description: "A passionate web developer focused on building responsive, user-friendly websites that deliver exceptional digital experiences.",
+                image: "V",
+              },
+              {
+                name: "Jai Krithika R",
+                role: "App Developer",
+                expertise: "Mobile Development",
+                description: "A dedicated app developer committed to creating seamless, user-centric mobile applications that enhance everyday life.",
+                image: "K",
+              },
+              {
+                name: "Sakthi Sanmuki S V ",
                 role: "Product Designer",
                 expertise: "Industrial Design & UX",
-                description: "Award-winning sustainable product design",
-                image: "VP",
+                description: "An innovative product designer focused on creating user-centric, functional, and aesthetically pleasing designs that enhance everyday experiences.",
+                image: "S",
               },
             ].map((member, index) => (
               <motion.div
@@ -575,7 +616,7 @@ const Home = () => {
             transition={{ delay: 0.5 }}
             className="text-center mt-12"
           >
-            <Card className="p-8 bg-muted/50 max-w-3xl mx-auto">
+            <Card className="p-8 bg-muted/50 dark:bg-gray-800/50 max-w-3xl mx-auto">
               <h3 className="text-xl font-bold mb-4">Our Mission</h3>
               <p className="text-muted-foreground">
                 At AriGo, we believe everyone deserves to breathe clean air. Our mission
@@ -591,41 +632,7 @@ const Home = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="container mx-auto px-4 py-16">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <Card className="p-12 text-center bg-gradient-primary relative overflow-hidden">
-            <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Ready to Breathe Better?
-              </h2>
-              <p className="text-white/90 mb-8 max-w-2xl mx-auto">
-                Experience the future of portable air purification with real-time monitoring
-                and intelligent automation
-              </p>
-              <Button
-                size="lg"
-                variant="secondary"
-                className="bg-white text-primary hover:bg-white/90 shadow-lg px-8"
-                onClick={() => navigate("/dashboard")}
-              >
-                Get Started Now
-                <ArrowRight className="ml-2" />
-              </Button>
-            </div>
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute inset-0" style={{
-                backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-                backgroundSize: "30px 30px"
-              }} />
-            </div>
-          </Card>
-        </motion.div>
-      </div>
+
     </div>
   );
 };
