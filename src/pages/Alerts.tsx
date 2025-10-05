@@ -1,261 +1,180 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
-import { AlertCircle, AlertTriangle, Info, X, CheckCircle, Sun, Moon } from "lucide-react";
-import { toast } from "sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AlertTriangle, Info, XCircle, CheckCircle, Bell, X, AlertCircle } from 'lucide-react';
+
+type AlertType = 'error' | 'warning' | 'info';
 
 interface Alert {
   id: number;
-  type: "info" | "warning" | "error";
-  title: string;
+  type: AlertType;
   message: string;
-  time: string;
+  timestamp: string;
 }
 
-const Alerts = () => {
-  const [alerts, setAlerts] = useState<Alert[]>([
-    {
-      id: 1,
-      type: "error",
-      title: "Poor Air Quality",
-      message: "AQI has reached 125. Consider increasing fan speed or moving to a cleaner area.",
-      time: "2 minutes ago",
-    },
-    {
-      id: 2,
-      type: "warning",
-      title: "Filter Replacement Soon",
-      message: "HEPA filter health is at 72%. Schedule replacement in 15 days.",
-      time: "1 hour ago",
-    },
-    {
-      id: 3,
-      type: "warning",
-      title: "Battery Low",
-      message: "Battery level is at 25%. Please charge the device soon.",
-      time: "3 hours ago",
-    },
-    {
-      id: 4,
-      type: "info",
-      title: "Firmware Update Available",
-      message: "Version 2.1.5 is now available with improved sensor accuracy.",
-      time: "1 day ago",
-    },
-    {
-        id: 5,
-        type: "error",
-        title: "High VOC Levels Detected",
-        message: "Volatile Organic Compound levels are higher than recommended. Ventilate the area.",
-        time: "5 minutes ago",
-    },
-    {
-        id: 6,
-        type: "info",
-        title: "Device Connected",
-        message: "Arigo AirGuard Pro is connected to your Wi-Fi network.",
-        time: "2 days ago",
-    }
-  ]);
-  const [darkMode, setDarkMode] = useState(false);
+const mockAlerts: Alert[] = [
+    { id: 1, type: 'error', message: 'Failed to fetch sensor data from AQ-102. Sensor may be offline.', timestamp: '2023-10-27T10:00:00Z' },
+    { id: 2, type: 'warning', message: 'High CO2 levels detected in Zone 3. Recommend increasing ventilation.', timestamp: '2023-10-27T10:05:00Z' },
+    { id: 3, type: 'info', message: 'System software update v1.2.3 completed successfully.', timestamp: '2023-10-27T09:30:00Z' },
+    { id: 4, type: 'error', message: 'Authentication with cloud service failed. Please check API keys.', timestamp: '2023-10-27T08:45:00Z' },
+    { id: 5, type: 'warning', message: 'Device battery on AQ-055 is low (15%).', timestamp: '2023-10-27T11:00:00Z' },
+    { id: 6, type: 'info', message: 'New device "Lobby Sensor" added to the network.', timestamp: '2023-10-26T15:00:00Z' },
+    { id: 7, type: 'error', message: 'Network connectivity lost for the West Wing sensors.', timestamp: '2023-10-27T11:10:00Z' },
+    { id: 8, type: 'warning', message: 'Filter for HVAC unit #3 needs replacement soon.', timestamp: '2023-10-25T12:00:00Z' },
+];
 
-  useEffect(() => {
-    const savedMode = localStorage.getItem("darkMode");
-    const isDarkMode = savedMode === "true";
-    setDarkMode(isDarkMode);
-    
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
-  const getAlertConfig = (type: Alert["type"]) => {
+const AlertIcon = ({ type }: { type: AlertType }) => {
     switch (type) {
-      case "error":
-        return {
-          icon: AlertCircle,
-          bgColor: "bg-red-500/10",
-          borderColor: "border-red-500/30",
-          iconColor: "text-red-500",
-        };
-      case "warning":
-        return {
-          icon: AlertTriangle,
-          bgColor: "bg-yellow-500/10",
-          borderColor: "border-yellow-500/30",
-          iconColor: "text-yellow-500",
-        };
-      case "info":
-      default:
-        return {
-          icon: Info,
-          bgColor: "bg-blue-500/10",
-          borderColor: "border-blue-500/30",
-          iconColor: "text-blue-500",
-        };
+        case 'error': return <XCircle className="w-5 h-5 text-red-500" />;
+        case 'warning': return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
+        case 'info': return <Info className="w-5 h-5 text-blue-500" />;
+        default: return <Bell className="w-5 h-5 text-gray-500" />;
     }
-  };
+};
 
-  const dismissAlert = (id: number) => {
-    setAlerts(alerts.filter((alert) => alert.id !== id));
-    toast.success("Alert dismissed");
-  };
-
-  const dismissAll = () => {
-    setAlerts([]);
-    toast.success("All alerts dismissed");
-  }
-
-  const renderAlert = (alert: Alert) => {
-    const config = getAlertConfig(alert.type);
-    const Icon = config.icon;
+const AlertCard = ({ alert, onDismiss }: { alert: Alert; onDismiss: (id: number) => void; }) => {
+    
+    const cardVariants = {
+        initial: { opacity: 0, y: 50, scale: 0.95 },
+        animate: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, x: -100, transition: { duration: 0.3 } },
+    };
 
     return (
-      <motion.div
-        key={alert.id}
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: 50, height: 0, marginBottom: 0 }}
-        transition={{ duration: 0.3 }}
-        layout
-      >
-        <Card className={`p-4 ${config.bgColor} border ${config.borderColor} shadow-sm hover:shadow-md transition-shadow bg-card`}>
-          <div className="flex items-start gap-4">
-            <div className={`p-2 rounded-lg bg-background ${config.iconColor}`}>
-              <Icon className="w-5 h-5" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-start justify-between mb-1">
-                <div>
-                  <h3 className="font-semibold text-md text-foreground">{alert.title}</h3>
-                  <p className="text-xs text-muted-foreground">
-                    {alert.time}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => dismissAlert(alert.id)}
-                  className="h-7 w-7 text-muted-foreground hover:bg-destructive/20"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-              <p className="text-sm text-foreground/90">{alert.message}</p>
-            </div>
-          </div>
-        </Card>
-      </motion.div>
+        <motion.div
+            layout
+            variants={cardVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+        >
+            <Card>
+                <CardContent className="p-4 flex items-start space-x-4">
+                    <div className="flex-shrink-0">
+                        <AlertIcon type={alert.type} />
+                    </div>
+                    <div className="flex-grow">
+                        <p className="font-semibold">{alert.message}</p>
+                        <p className="text-sm text-muted-foreground">
+                            {new Date(alert.timestamp).toLocaleString()}
+                        </p>
+                    </div>
+                    <Button variant="ghost" size="icon" onClick={() => onDismiss(alert.id)} className="flex-shrink-0">
+                        <X className="w-4 h-4" />
+                    </Button>
+                </CardContent>
+            </Card>
+        </motion.div>
     );
-  }
+};
 
-  const filteredAlerts = (type: Alert["type"]) => alerts.filter(alert => alert.type === type);
 
-  return (
-    <div className="min-h-screen bg-background text-foreground p-4 sm:p-6 md:p-8">
-        <div className="absolute top-4 right-4">
-            <button
-            onClick={() => {
-                const newDarkMode = !darkMode;
-                setDarkMode(newDarkMode);
-                localStorage.setItem("darkMode", newDarkMode.toString());
-                if (newDarkMode) {
-                document.documentElement.classList.add("dark");
-                } else {
-                document.documentElement.classList.remove("dark");
-                }
-            }}
-            className="p-2 rounded-full border border-border bg-card hover:bg-accent transition-colors"
-            >
-            {darkMode ? (
-                <Sun className="h-5 w-5" />
-            ) : (
-                <Moon className="h-5 w-5" />
-            )}
-            </button>
-      </div>
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-6 mt-12"
-      >
-        <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold">Alerts & Notifications</h1>
-            {alerts.length > 0 && (
-                <Button variant="outline" onClick={dismissAll}>Clear All</Button>
-            )}
-        </div>
-        <p className="text-muted-foreground mt-1">
-          Monitor important events and system status
-        </p>
-      </motion.div>
+const Alerts = () => {
+    const [alerts, setAlerts] = useState<Alert[]>([]);
+    const [activeTab, setActiveTab] = useState("all");
 
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">All ({alerts.length})</TabsTrigger>
-          <TabsTrigger value="errors">Errors ({filteredAlerts("error").length})</TabsTrigger>
-          <TabsTrigger value="warnings">Warnings ({filteredAlerts("warning").length})</TabsTrigger>
-          <TabsTrigger value="info">Info ({filteredAlerts("info").length})</TabsTrigger>
-        </TabsList>
-        <AnimatePresence mode="wait">
+    useEffect(() => {
+        // Simulate fetching alerts
+        setAlerts(mockAlerts.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
+    }, []);
+
+    const dismissAlert = (id: number) => {
+        setAlerts(prevAlerts => prevAlerts.filter(alert => alert.id !== id));
+    };
+
+    const dismissAll = () => {
+        setAlerts([]);
+    };
+
+    const filteredAlerts = (type: AlertType) => alerts.filter(alert => alert.type === type);
+
+    const renderAlert = (alert: Alert) => (
+        <AlertCard key={alert.id} alert={alert} onDismiss={dismissAlert} />
+    );
+    
+    const tabContent = (type: "all" | AlertType) => {
+        const alertsToShow = type === 'all' ? alerts : filteredAlerts(type);
+        const emptyStateMessages = {
+            all: "You're all caught up! All systems are running smoothly.",
+            error: "No error alerts.",
+            warning: "No warning alerts.",
+            info: "No informational alerts."
+        }
+
+        return (
             <motion.div
-                key={ "all" }
+                key={type}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.3 }}
+                className="mt-4"
             >
-                <TabsContent value="all">
-                    {alerts.length === 0 ? (
-                        <Card className="mt-4 p-12 text-center bg-card border-dashed">
-                        <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                        <h3 className="text-xl font-semibold mb-2">No Active Alerts</h3>
-                        <p className="text-muted-foreground">
-                            You're all caught up! All systems are running smoothly.
-                        </p>
-                        </Card>
-                    ) : (
-                        <div className="mt-4 space-y-4">
-                            {alerts.map(renderAlert)}
-                        </div>
-                    )}
-                </TabsContent>
-                <TabsContent value="errors">
-                    {filteredAlerts("error").length === 0 ? (
-                        <p className="text-muted-foreground text-center p-8 mt-4">No error alerts.</p>
-                    ) : (
-                        <div className="mt-4 space-y-4">
-                            {filteredAlerts("error").map(renderAlert)}
-                        </div>
-                    )}
-                </TabsContent>
-                <TabsContent value="warnings">
-                    {filteredAlerts("warning").length === 0 ? (
-                        <p className="text-muted-foreground text-center p-8 mt-4">No warning alerts.</p>
-                    ) : (
-                        <div className="mt-4 space-y-4">
-                            {filteredAlerts("warning").map(renderAlert)}
-                        </div>
-                    )}
-                </TabsContent>
-                <TabsContent value="info">
-                    {filteredAlerts("info").length === 0 ? (
-                        <p className="text-muted-foreground text-center p-8 mt-4">No informational alerts.</p>
-                    ) : (
-                        <div className="mt-4 space-y-4">
-                            {filteredAlerts("info").map(renderAlert)}
-                        </div>
-                    )}
-                </TabsContent>
+                {alertsToShow.length === 0 ? (
+                    <Card className="text-center p-8">
+                         <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                        <h3 className="text-xl font-semibold mb-2">
+                            {type === 'all' ? "No Active Alerts" : `No ${type} alerts`}
+                        </h3>
+                        <p className="text-muted-foreground">{emptyStateMessages[type]}</p>
+                    </Card>
+                ) : (
+                    <div className="space-y-4">
+                        <AnimatePresence>
+                            {alertsToShow.map(renderAlert)}
+                        </AnimatePresence>
+                    </div>
+                )}
             </motion.div>
-        </AnimatePresence>
-      </Tabs>
-    </div>
-  );
-};
+        )
+    }
+
+    return (
+        <div className="container mx-auto p-4 md:p-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <div className="flex justify-between items-center">
+                <h1 className="text-3xl font-bold tracking-tight">System Alerts</h1>
+                {alerts.length > 0 && (
+                    <Button variant="outline" onClick={dismissAll}>Clear All</Button>
+                )}
+            </div>
+            <p className="text-muted-foreground mt-1">
+              Monitor important events and system status
+            </p>
+          </motion.div>
+    
+          <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="all">All ({alerts.length})</TabsTrigger>
+              <TabsTrigger value="errors">Errors ({filteredAlerts("error").length})</TabsTrigger>
+              <TabsTrigger value="warnings">Warnings ({filteredAlerts("warning").length})</TabsTrigger>
+              <TabsTrigger value="info">Info ({filteredAlerts("info").length})</TabsTrigger>
+            </TabsList>
+            <AnimatePresence mode="wait">
+                <TabsContent value="all" forceMount>
+                    {activeTab === "all" && tabContent("all")}
+                </TabsContent>
+                <TabsContent value="errors" forceMount>
+                    {activeTab === "errors" && tabContent("error")}
+                </TabsContent>
+                <TabsContent value="warnings" forceMount>
+                    {activeTab === "warnings" && tabContent("warning")}
+                </TabsContent>
+                <TabsContent value="info" forceMount>
+                    {activeTab === "info" && tabContent("info")}
+                </TabsContent>
+            </AnimatePresence>
+          </Tabs>
+        </div>
+      );
+    };
 
 export default Alerts;
