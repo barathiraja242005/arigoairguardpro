@@ -3,13 +3,14 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { useState, useEffect } from "react";
-import { Power, Fan, Moon, Zap, Bell, Calendar, Leaf, Settings, Wind, Sun, Clock } from "lucide-react";
+import { Power, Fan, Moon, Zap, Bell, Calendar, Leaf, Settings, Wind, Sun, Clock, Server } from "lucide-react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { startFluctuation, stopFluctuation } from "@/lib/uploadData";
 
 const Controls = () => {
   const [isPowerOn, setIsPowerOn] = useState(true);
@@ -109,7 +110,7 @@ const Controls = () => {
       <Card className="max-w-4xl mx-auto bg-card/80 backdrop-blur-sm shadow-lg border-border">
         <Tabs defaultValue="general">
           <CardHeader className="border-b border-border">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-muted/50">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 bg-muted/50">
               <TabsTrigger value="general" className="text-foreground data-[state=active]:bg-background">
                 <Settings className="w-5 h-5 mr-2"/> General
               </TabsTrigger>
@@ -121,6 +122,9 @@ const Controls = () => {
               </TabsTrigger>
               <TabsTrigger value="notifications" className="text-foreground data-[state=active]:bg-background">
                 <Bell className="w-5 h-5 mr-2"/> Notifications
+              </TabsTrigger>
+              <TabsTrigger value="data" className="text-foreground data-[state=active]:bg-background">
+                <Server className="w-5 h-5 mr-2"/> Data
               </TabsTrigger>
             </TabsList>
           </CardHeader>
@@ -296,6 +300,23 @@ const Controls = () => {
                     </Select>
                   </motion.div>
                 )}
+              </div>
+            </TabsContent>
+            <TabsContent value="data">
+              <div className="space-y-6 p-4 rounded-lg bg-background/50 border border-border">
+                <div className="flex items-center justify-between">
+                  <Label className="flex items-center gap-4">
+                    <Server className="w-8 h-8 text-foreground" />
+                    <span className="text-lg font-medium text-foreground">Data Fluctuation</span>
+                  </Label>
+                  <div className="flex gap-2">
+                    <Button onClick={startFluctuation}>Start</Button>
+                    <Button onClick={stopFluctuation} variant="destructive">Stop</Button>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Start or stop sending random sensor data to the database.
+                </p>
               </div>
             </TabsContent>
           </CardContent>

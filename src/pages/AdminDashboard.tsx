@@ -11,8 +11,11 @@ import {
   Shield,
   Sun,
   Moon,
+  Play,
+  Square,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { startFluctuation, stopFluctuation } from "@/lib/uploadData";
 
 interface Device {
   id: string;
@@ -81,6 +84,14 @@ const AdminDashboard = () => {
               <Moon className="h-5 w-5 text-foreground" />
             )}
           </button>
+          <Button variant="ghost" size="sm" onClick={startFluctuation}>
+            <Play className="mr-2 h-4 w-4" />
+            Start Fluctuation
+          </Button>
+          <Button variant="ghost" size="sm" onClick={stopFluctuation}>
+            <Square className="mr-2 h-4 w-4" />
+            Stop Fluctuation
+          </Button>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" />
             Logout
