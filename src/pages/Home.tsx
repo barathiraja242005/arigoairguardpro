@@ -129,13 +129,13 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5 dark:from-gray-900 dark:via-gray-800/20 dark:to-gray-900/20">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="absolute top-4 right-4">
         <Button
           size="icon"
           variant="outline"
           onClick={() => setDarkMode(!darkMode)}
-          className="rounded-full"
+          className="rounded-full bg-card"
         >
           {darkMode ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
         </Button>
@@ -186,7 +186,7 @@ const Home = () => {
                     Device Login
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
+                <DialogContent className="sm:max-w-md bg-card">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                       <Lock className="w-5 h-5 text-primary" />
@@ -206,6 +206,7 @@ const Home = () => {
                         onChange={(e) => setDeviceId(e.target.value)}
                         disabled={isLoading}
                         required
+                        className="bg-background"
                       />
                     </div>
                     <div className="space-y-2">
@@ -218,6 +219,7 @@ const Home = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         disabled={isLoading}
                         required
+                        className="bg-background"
                       />
                     </div>
                     <div className="text-xs text-muted-foreground bg-muted p-3 rounded-md">
@@ -331,7 +333,7 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="p-6 text-center hover:shadow-elevated transition-shadow">
+                <Card className="p-6 text-center hover:shadow-elevated transition-shadow bg-card">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                     <spec.icon className="w-6 h-6 text-primary" />
                   </div>
@@ -371,7 +373,7 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="p-6 h-full hover:shadow-card transition-shadow">
+                <Card className="p-6 h-full hover:shadow-card transition-shadow bg-card">
                   <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center mb-4">
                     <feature.icon className="w-6 h-6 text-white" />
                   </div>
@@ -387,7 +389,7 @@ const Home = () => {
       </div>
 
       {/* Air Pollution Awareness Section */}
-      <div className="bg-muted/30 dark:bg-gray-800/30 py-16">
+      <div className="bg-muted py-16">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -444,7 +446,7 @@ const Home = () => {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className="p-6 text-center h-full">
+                  <Card className="p-6 text-center h-full bg-card">
                     <div className={`text-4xl font-bold mb-2 text-${item.color}`}>
                       {item.stat}
                     </div>
@@ -572,7 +574,7 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="p-6 text-center hover:shadow-elevated transition-all h-full group">
+                <Card className="p-6 text-center hover:shadow-elevated transition-all h-full group bg-card">
                   <div className="relative mb-4">
                     <div className="w-24 h-24 rounded-full bg-gradient-primary flex items-center justify-center mx-auto text-3xl font-bold text-white group-hover:scale-110 transition-transform">
                       {member.image}
@@ -616,7 +618,7 @@ const Home = () => {
             transition={{ delay: 0.5 }}
             className="text-center mt-12"
           >
-            <Card className="p-8 bg-muted/50 dark:bg-gray-800/50 max-w-3xl mx-auto">
+            <Card className="p-8 bg-muted max-w-3xl mx-auto">
               <h3 className="text-xl font-bold mb-4">Our Mission</h3>
               <p className="text-muted-foreground">
                 At AriGo, we believe everyone deserves to breathe clean air. Our mission

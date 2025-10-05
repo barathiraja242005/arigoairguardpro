@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import AqiTrends from "@/components/admin/AqiTrends";
 import DeviceDetails from "@/components/admin/DeviceDetails";
 import InfoCard from "@/components/admin/InfoCard";
@@ -8,11 +9,34 @@ import {
   Smartphone,
   Wifi,
   Shield,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+interface Device {
+  id: string;
+  name: string;
+  status: "Online" | "Offline";
+  aqi: number;
+  lastReading: string;
+}
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    const isDarkMode = savedMode === "true";
+    setDarkMode(isDarkMode);
+    
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
 
   const handleLogout = () => {
     navigate("/");
@@ -25,7 +49,7 @@ const AdminDashboard = () => {
     { title: "Average AQI", value: "66", icon: Shield },
   ];
 
-  const devices = [
+  const devices: Device[] = [
     { id: "A1B2-C3D4-E5F6", name: "John's Unit", status: "Online", aqi: 70, lastReading: "just now" },
     { id: "G7H8-I9J0-K1L2", name: "Jane's Unit", status: "Online", aqi: 65, lastReading: "2 minutes ago" },
     { id: "M3N4-O5P6-Q7R8", name: "Peter's Unit", status: "Online", aqi: 55, lastReading: "10 minutes ago" },
@@ -34,13 +58,34 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm px-6 h-16 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
-        <Button variant="ghost" size="sm" onClick={handleLogout}>
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
-        </Button>
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="bg-card shadow-sm px-6 h-16 flex items-center justify-between border-b">
+        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => {
+              const newDarkMode = !darkMode;
+              setDarkMode(newDarkMode);
+              localStorage.setItem("darkMode", newDarkMode.toString());
+              if (newDarkMode) {
+                document.documentElement.classList.add("dark");
+              } else {
+                document.documentElement.classList.remove("dark");
+              }
+            }}
+            className="p-2 rounded-full border border-border bg-card hover:bg-accent transition-colors"
+          >
+            {darkMode ? (
+              <Sun className="h-5 w-5 text-foreground" />
+            ) : (
+              <Moon className="h-5 w-5 text-foreground" />
+            )}
+          </button>
+          <Button variant="ghost" size="sm" onClick={handleLogout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+        </div>
       </header>
       <main className="p-8 space-y-8">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -51,7 +96,7 @@ const AdminDashboard = () => {
 
         <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-8">
-                <h2 className="text-xl font-semibold text-gray-700">Device Details</h2>
+                <h2 className="text-xl font-semibold text-muted-foreground">Device Details</h2>
                 <div className="grid gap-8 md:grid-cols-2">
                     {devices.map(device => (
                         <DeviceDetails key={device.id} device={device} />
@@ -59,11 +104,10 @@ const AdminDashboard = () => {
                 </div>
             </div>
             <div className="space-y-8">
-                <h2 className="text-xl font-semibold text-gray-700">Overall AQI Trends</h2>
+                <h2 className="text-xl font-semibold text-muted-foreground">Overall AQI Trends</h2>
                 <AqiTrends />
             </div>
         </div>
-
       </main>
     </div>
   );

@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { AlertCircle, AlertTriangle, Info, X, CheckCircle } from "lucide-react";
+import { AlertCircle, AlertTriangle, Info, X, CheckCircle, Sun, Moon } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -59,6 +59,19 @@ const Alerts = () => {
         time: "2 days ago",
     }
   ]);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("darkMode");
+    const isDarkMode = savedMode === "true";
+    setDarkMode(isDarkMode);
+    
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
 
   const getAlertConfig = (type: Alert["type"]) => {
     switch (type) {
@@ -87,11 +100,6 @@ const Alerts = () => {
     }
   };
 
-  useEffect(() => {
-    // This effect could be used to fetch alerts from an API
-    // For now, we are using static data
-  }, []);
-
   const dismissAlert = (id: number) => {
     setAlerts(alerts.filter((alert) => alert.id !== id));
     toast.success("Alert dismissed");
@@ -115,15 +123,15 @@ const Alerts = () => {
         transition={{ duration: 0.3 }}
         layout
       >
-        <Card className={`p-4 ${config.bgColor} border ${config.borderColor} shadow-sm hover:shadow-md transition-shadow`}>
+        <Card className={`p-4 ${config.bgColor} border ${config.borderColor} shadow-sm hover:shadow-md transition-shadow bg-card`}>
           <div className="flex items-start gap-4">
-            <div className={`p-2 rounded-lg bg-card ${config.iconColor}`}>
+            <div className={`p-2 rounded-lg bg-background ${config.iconColor}`}>
               <Icon className="w-5 h-5" />
             </div>
             <div className="flex-1">
               <div className="flex items-start justify-between mb-1">
                 <div>
-                  <h3 className="font-semibold text-md">{alert.title}</h3>
+                  <h3 className="font-semibold text-md text-foreground">{alert.title}</h3>
                   <p className="text-xs text-muted-foreground">
                     {alert.time}
                   </p>
@@ -148,11 +156,32 @@ const Alerts = () => {
   const filteredAlerts = (type: Alert["type"]) => alerts.filter(alert => alert.type === type);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black p-4 sm:p-6 md:p-8">
+    <div className="min-h-screen bg-background text-foreground p-4 sm:p-6 md:p-8">
+        <div className="absolute top-4 right-4">
+            <button
+            onClick={() => {
+                const newDarkMode = !darkMode;
+                setDarkMode(newDarkMode);
+                localStorage.setItem("darkMode", newDarkMode.toString());
+                if (newDarkMode) {
+                document.documentElement.classList.add("dark");
+                } else {
+                document.documentElement.classList.remove("dark");
+                }
+            }}
+            className="p-2 rounded-full border border-border bg-card hover:bg-accent transition-colors"
+            >
+            {darkMode ? (
+                <Sun className="h-5 w-5" />
+            ) : (
+                <Moon className="h-5 w-5" />
+            )}
+            </button>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
+        className="mb-6 mt-12"
       >
         <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">Alerts & Notifications</h1>
@@ -182,7 +211,7 @@ const Alerts = () => {
             >
                 <TabsContent value="all">
                     {alerts.length === 0 ? (
-                        <Card className="mt-4 p-12 text-center bg-transparent border-dashed">
+                        <Card className="mt-4 p-12 text-center bg-card border-dashed">
                         <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
                         <h3 className="text-xl font-semibold mb-2">No Active Alerts</h3>
                         <p className="text-muted-foreground">
