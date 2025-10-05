@@ -3,9 +3,28 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { useState, useEffect } from "react";
-import { Power, Fan, Moon, Zap, Bell, Calendar, Leaf, Settings, Wind, Sun, Clock, Server } from "lucide-react";
+import {
+  Power,
+  Fan,
+  Moon,
+  Zap,
+  Bell,
+  Calendar,
+  Leaf,
+  Settings,
+  Wind,
+  Sun,
+  Clock,
+  Server,
+} from "lucide-react";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,7 +48,7 @@ const Controls = () => {
     const savedMode = localStorage.getItem("darkMode");
     const isDarkMode = savedMode === "true";
     setDarkMode(isDarkMode);
-    
+
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
     } else {
@@ -54,14 +73,18 @@ const Controls = () => {
 
   const handleSchedulingToggle = () => {
     setIsSchedulingOn(!isSchedulingOn);
-    toast.success(isSchedulingOn ? "Scheduling disabled" : "Scheduling enabled");
+    toast.success(
+      isSchedulingOn ? "Scheduling disabled" : "Scheduling enabled"
+    );
   };
 
   const handleNotificationsToggle = () => {
     setNotifications(!notifications);
-    toast.success(notifications ? "Notifications disabled" : "Notifications enabled");
+    toast.success(
+      notifications ? "Notifications disabled" : "Notifications enabled"
+    );
   };
-  
+
   const handleEcoModeToggle = () => {
     setEcoMode(!ecoMode);
     toast.success(ecoMode ? "Eco mode disabled" : "Eco mode enabled");
@@ -101,7 +124,9 @@ const Controls = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-foreground">Device Controls</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-foreground">
+          Device Controls
+        </h1>
         <p className="text-muted-foreground">
           Remote control and configuration for your device.
         </p>
@@ -110,21 +135,36 @@ const Controls = () => {
       <Card className="max-w-4xl mx-auto bg-card/80 backdrop-blur-sm shadow-lg border-border">
         <Tabs defaultValue="general">
           <CardHeader className="border-b border-border">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 bg-muted/50">
-              <TabsTrigger value="general" className="text-foreground data-[state=active]:bg-background">
-                <Settings className="w-5 h-5 mr-2"/> General
+            <TabsList className="flex flex-wrap h-auto bg-muted/50">
+              <TabsTrigger
+                value="general"
+                className="text-foreground data-[state=active]:bg-background"
+              >
+                <Settings className="w-5 h-5 mr-2" /> General
               </TabsTrigger>
-              <TabsTrigger value="modes" className="text-foreground data-[state=active]:bg-background">
-                <Wind className="w-5 h-5 mr-2"/> Modes
+              <TabsTrigger
+                value="modes"
+                className="text-foreground data-[state=active]:bg-background"
+              >
+                <Wind className="w-5 h-5 mr-2" /> Modes
               </TabsTrigger>
-              <TabsTrigger value="scheduling" className="text-foreground data-[state=active]:bg-background">
-                <Calendar className="w-5 h-5 mr-2"/> Scheduling
+              <TabsTrigger
+                value="scheduling"
+                className="text-foreground data-[state=active]:bg-background"
+              >
+                <Calendar className="w-5 h-5 mr-2" /> Scheduling
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="text-foreground data-[state=active]:bg-background">
-                <Bell className="w-5 h-5 mr-2"/> Notifications
+              <TabsTrigger
+                value="notifications"
+                className="text-foreground data-[state=active]:bg-background"
+              >
+                <Bell className="w-5 h-5 mr-2" /> Notifications
               </TabsTrigger>
-              <TabsTrigger value="data" className="text-foreground data-[state=active]:bg-background">
-                <Server className="w-5 h-5 mr-2"/> Data
+              <TabsTrigger
+                value="data"
+                className="text-foreground data-[state=active]:bg-background"
+              >
+                <Server className="w-5 h-5 mr-2" /> Data
               </TabsTrigger>
             </TabsList>
           </CardHeader>
@@ -133,28 +173,42 @@ const Controls = () => {
             <TabsContent value="general">
               <div className="space-y-6">
                 <div className="flex items-center justify-between p-4 rounded-lg bg-background/50 border border-border">
-                  <Label htmlFor="power-switch" className="flex items-center gap-4 cursor-pointer">
-                    <Power className={`w-8 h-8 ${isPowerOn ? 'text-green-500' : 'text-muted-foreground'}`} />
-                    <span className="text-lg font-medium text-foreground">Device Power</span>
+                  <Label
+                    htmlFor="power-switch"
+                    className="flex items-center gap-4 cursor-pointer"
+                  >
+                    <Power
+                      className={`w-8 h-8 ${
+                        isPowerOn ? "text-green-500" : "text-muted-foreground"
+                      }`}
+                    />
+                    <span className="text-lg font-medium text-foreground">
+                      Device Power
+                    </span>
                   </Label>
-                  <Switch 
-                    id="power-switch" 
-                    checked={isPowerOn} 
+                  <Switch
+                    id="power-switch"
+                    checked={isPowerOn}
                     onCheckedChange={handlePowerToggle}
                   />
                 </div>
                 <div className="p-4 rounded-lg bg-background/50 border border-border">
-                  <Label htmlFor="fan-speed-slider" className="flex items-center gap-4 mb-4">
+                  <Label
+                    htmlFor="fan-speed-slider"
+                    className="flex items-center gap-4 mb-4"
+                  >
                     <Fan className="w-8 h-8 text-blue-500" />
-                    <span className="text-lg font-medium text-foreground">Fan Speed</span>
+                    <span className="text-lg font-medium text-foreground">
+                      Fan Speed
+                    </span>
                   </Label>
                   <div className="flex items-center gap-4">
-                    <Slider 
-                      id="fan-speed-slider" 
-                      value={fanSpeed} 
-                      onValueChange={setFanSpeed} 
-                      max={5} 
-                      min={1} 
+                    <Slider
+                      id="fan-speed-slider"
+                      value={fanSpeed}
+                      onValueChange={setFanSpeed}
+                      max={5}
+                      min={1}
                       step={1}
                     />
                     <span className="font-bold text-lg w-12 text-center text-foreground">
@@ -168,35 +222,62 @@ const Controls = () => {
             <TabsContent value="modes">
               <div className="space-y-6">
                 <div className="flex items-center justify-between p-4 rounded-lg bg-background/50 border border-border">
-                  <Label htmlFor="auto-mode-switch" className="flex items-center gap-4 cursor-pointer">
-                    <Zap className={`w-8 h-8 ${autoMode ? 'text-yellow-500' : 'text-muted-foreground'}`} />
-                    <span className="text-lg font-medium text-foreground">Auto Mode</span>
+                  <Label
+                    htmlFor="auto-mode-switch"
+                    className="flex items-center gap-4 cursor-pointer"
+                  >
+                    <Zap
+                      className={`w-8 h-8 ${
+                        autoMode ? "text-yellow-500" : "text-muted-foreground"
+                      }`}
+                    />
+                    <span className="text-lg font-medium text-foreground">
+                      Auto Mode
+                    </span>
                   </Label>
-                  <Switch 
-                    id="auto-mode-switch" 
-                    checked={autoMode} 
+                  <Switch
+                    id="auto-mode-switch"
+                    checked={autoMode}
                     onCheckedChange={handleAutoModeToggle}
                   />
                 </div>
                 <div className="flex items-center justify-between p-4 rounded-lg bg-background/50 border border-border">
-                  <Label htmlFor="silent-mode-switch" className="flex items-center gap-4 cursor-pointer">
-                    <Moon className={`w-8 h-8 ${silentMode ? 'text-indigo-500' : 'text-muted-foreground'}`} />
-                    <span className="text-lg font-medium text-foreground">Silent Mode</span>
+                  <Label
+                    htmlFor="silent-mode-switch"
+                    className="flex items-center gap-4 cursor-pointer"
+                  >
+                    <Moon
+                      className={`w-8 h-8 ${
+                        silentMode ? "text-indigo-500" : "text-muted-foreground"
+                      }`}
+                    />
+                    <span className="text-lg font-medium text-foreground">
+                      Silent Mode
+                    </span>
                   </Label>
-                  <Switch 
-                    id="silent-mode-switch" 
-                    checked={silentMode} 
+                  <Switch
+                    id="silent-mode-switch"
+                    checked={silentMode}
                     onCheckedChange={handleSilentModeToggle}
                   />
                 </div>
                 <div className="flex items-center justify-between p-4 rounded-lg bg-background/50 border border-border">
-                  <Label htmlFor="eco-mode-switch" className="flex items-center gap-4 cursor-pointer">
-                    <Leaf className={`w-8 h-8 ${ecoMode ? 'text-green-500' : 'text-muted-foreground'}`} />
-                    <span className="text-lg font-medium text-foreground">Eco Mode</span>
+                  <Label
+                    htmlFor="eco-mode-switch"
+                    className="flex items-center gap-4 cursor-pointer"
+                  >
+                    <Leaf
+                      className={`w-8 h-8 ${
+                        ecoMode ? "text-green-500" : "text-muted-foreground"
+                      }`}
+                    />
+                    <span className="text-lg font-medium text-foreground">
+                      Eco Mode
+                    </span>
                   </Label>
-                  <Switch 
-                    id="eco-mode-switch" 
-                    checked={ecoMode} 
+                  <Switch
+                    id="eco-mode-switch"
+                    checked={ecoMode}
                     onCheckedChange={handleEcoModeToggle}
                   />
                 </div>
@@ -206,58 +287,78 @@ const Controls = () => {
             <TabsContent value="scheduling">
               <div className="space-y-6">
                 <div className="flex items-center justify-between p-4 rounded-lg bg-background/50 border border-border">
-                  <Label htmlFor="scheduling-switch" className="flex items-center gap-4 cursor-pointer">
-                    <Calendar className={`w-8 h-8 ${isSchedulingOn ? 'text-purple-500' : 'text-muted-foreground'}`} />
-                    <span className="text-lg font-medium text-foreground">Enable Scheduling</span>
+                  <Label
+                    htmlFor="scheduling-switch"
+                    className="flex items-center gap-4 cursor-pointer"
+                  >
+                    <Calendar
+                      className={`w-8 h-8 ${
+                        isSchedulingOn
+                          ? "text-purple-500"
+                          : "text-muted-foreground"
+                      }`}
+                    />
+                    <span className="text-lg font-medium text-foreground">
+                      Enable Scheduling
+                    </span>
                   </Label>
-                  <Switch 
-                    id="scheduling-switch" 
-                    checked={isSchedulingOn} 
+                  <Switch
+                    id="scheduling-switch"
+                    checked={isSchedulingOn}
                     onCheckedChange={handleSchedulingToggle}
                   />
                 </div>
                 {isSchedulingOn && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: -10 }} 
-                    animate={{ opacity: 1, y: 0 }} 
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
                     className="p-4 rounded-lg bg-background/50 border border-border"
                   >
                     <div className="grid sm:grid-cols-2 gap-6">
                       <div className="relative">
-                        <Label htmlFor="start-time" className="mb-2 block text-foreground">
+                        <Label
+                          htmlFor="start-time"
+                          className="mb-2 block text-foreground"
+                        >
                           Start Time
                         </Label>
                         <div className="relative">
                           <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                          <Input 
-                            id="start-time" 
-                            type="time" 
-                            value={startTime} 
+                          <Input
+                            id="start-time"
+                            type="time"
+                            value={startTime}
                             onChange={(e) => setStartTime(e.target.value)}
                             className="bg-background border-border text-foreground pl-10"
-                            style={{colorScheme: darkMode ? 'dark' : 'light'}}
+                            style={{ colorScheme: darkMode ? "dark" : "light" }}
                           />
                         </div>
                       </div>
                       <div className="relative">
-                        <Label htmlFor="end-time" className="mb-2 block text-foreground">
+                        <Label
+                          htmlFor="end-time"
+                          className="mb-2 block text-foreground"
+                        >
                           End Time
                         </Label>
                         <div className="relative">
                           <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                          <Input 
-                            id="end-time" 
-                            type="time" 
-                            value={endTime} 
+                          <Input
+                            id="end-time"
+                            type="time"
+                            value={endTime}
                             onChange={(e) => setEndTime(e.target.value)}
                             className="bg-background border-border text-foreground pl-10"
-                            style={{colorScheme: darkMode ? 'dark' : 'light'}}
+                            style={{ colorScheme: darkMode ? "dark" : "light" }}
                           />
                         </div>
                       </div>
                     </div>
                     <div className="mt-6 flex justify-end">
-                      <Button onClick={handleConfirmScheduling} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                      <Button
+                        onClick={handleConfirmScheduling}
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                      >
                         Confirm
                       </Button>
                     </div>
@@ -269,33 +370,51 @@ const Controls = () => {
             <TabsContent value="notifications">
               <div className="space-y-6">
                 <div className="flex items-center justify-between p-4 rounded-lg bg-background/50 border border-border">
-                  <Label htmlFor="notifications-switch" className="flex items-center gap-4 cursor-pointer">
-                    <Bell className={`w-8 h-8 ${notifications ? 'text-red-500' : 'text-muted-foreground'}`} />
-                    <span className="text-lg font-medium text-foreground">Enable Notifications</span>
+                  <Label
+                    htmlFor="notifications-switch"
+                    className="flex items-center gap-4 cursor-pointer"
+                  >
+                    <Bell
+                      className={`w-8 h-8 ${
+                        notifications ? "text-red-500" : "text-muted-foreground"
+                      }`}
+                    />
+                    <span className="text-lg font-medium text-foreground">
+                      Enable Notifications
+                    </span>
                   </Label>
-                  <Switch 
-                    id="notifications-switch" 
-                    checked={notifications} 
+                  <Switch
+                    id="notifications-switch"
+                    checked={notifications}
                     onCheckedChange={handleNotificationsToggle}
                   />
                 </div>
                 {notifications && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: -10 }} 
-                    animate={{ opacity: 1, y: 0 }} 
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
                     className="p-4 rounded-lg bg-background/50 border border-border"
                   >
                     <Label className="mb-2 block text-foreground">
                       Notification Type
                     </Label>
-                    <Select value={notificationType} onValueChange={setNotificationType}>
+                    <Select
+                      value={notificationType}
+                      onValueChange={setNotificationType}
+                    >
                       <SelectTrigger className="bg-background border-border">
                         <SelectValue placeholder="Select a type" />
                       </SelectTrigger>
                       <SelectContent className="bg-background border-border">
-                        <SelectItem value="push" className="focus:bg-accent">Push Notification</SelectItem>
-                        <SelectItem value="email" className="focus:bg-accent">Email</SelectItem>
-                        <SelectItem value="sms" className="focus:bg-accent">SMS</SelectItem>
+                        <SelectItem value="push" className="focus:bg-accent">
+                          Push Notification
+                        </SelectItem>
+                        <SelectItem value="email" className="focus:bg-accent">
+                          Email
+                        </SelectItem>
+                        <SelectItem value="sms" className="focus:bg-accent">
+                          SMS
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </motion.div>
@@ -307,11 +426,15 @@ const Controls = () => {
                 <div className="flex items-center justify-between">
                   <Label className="flex items-center gap-4">
                     <Server className="w-8 h-8 text-foreground" />
-                    <span className="text-lg font-medium text-foreground">Data Fluctuation</span>
+                    <span className="text-lg font-medium text-foreground">
+                      Data Fluctuation
+                    </span>
                   </Label>
                   <div className="flex gap-2">
                     <Button onClick={startFluctuation}>Start</Button>
-                    <Button onClick={stopFluctuation} variant="destructive">Stop</Button>
+                    <Button onClick={stopFluctuation} variant="destructive">
+                      Stop
+                    </Button>
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground">

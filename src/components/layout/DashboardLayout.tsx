@@ -15,10 +15,10 @@ const DashboardLayout = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
         <div className="flex-1 flex flex-col">
-          <header className="h-16 border-b border-border flex items-center px-4 bg-card">
+          <header className="h-16 border-b border-border flex items-center px-4 bg-card/50 backdrop-blur-sm sm:bg-card">
             <SidebarTrigger />
             <div className="flex-1" />
             <div className="flex items-center gap-4">

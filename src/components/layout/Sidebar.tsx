@@ -41,17 +41,17 @@ export function AppSidebar() {
   const handleSignOut = () => {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("deviceId");
-    
+
     toast({
       title: "Signed Out",
       description: "You have been successfully signed out",
     });
-    
+
     navigate("/");
   };
 
   return (
-    <Sidebar className="border-r border-sidebar-border">
+    <Sidebar className="border-r border-sidebar-border bg-white dark:bg-card">
       <SidebarHeader className="border-b border-sidebar-border p-4">
         <div className="flex items-center gap-2">
           <motion.div
@@ -96,7 +96,9 @@ export function AppSidebar() {
 
       <SidebarFooter className="border-t border-sidebar-border p-4">
         <div className="mb-3">
-          <div className="text-xs text-muted-foreground mb-1">Connected Device</div>
+          <div className="text-xs text-muted-foreground mb-1">
+            Connected Device
+          </div>
           <div className="font-medium text-sm">{deviceId}</div>
         </div>
         <Button
