@@ -1,73 +1,84 @@
-# Welcome to your Lovable project
+# AriGo AirGuard Pro 🌬️🛡️
 
-## Project info
+AriGo AirGuard Pro is a **portable and compact air-quality monitoring device** designed to help users stay aware of the air they breathe. It provides real-time monitoring and alerts to promote healthier and safer living conditions.
 
-**URL**: https://lovable.dev/projects/e4112c43-50d0-4884-a450-73f78993cb9e
+---
 
-## How can I edit this code?
+## 🚀 Project Overview
 
-There are several ways of editing your application.
+Air pollution is an increasing concern in both indoor and outdoor environments. AriGo AirGuard Pro addresses this issue by offering a **lightweight, easy-to-carry, and efficient air monitoring solution**.
 
-**Use Lovable**
+The project is currently in the **testing stage** and focuses on accuracy, portability, and user convenience.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e4112c43-50d0-4884-a450-73f78993cb9e) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## ✨ Key Features
 
-**Use your preferred IDE**
+- 📦 Portable & Compact Design  
+- 🌫️ Real-Time Air Quality Monitoring  
+- ⚠️ Instant Safety Alerts  
+- 🔋 Low Power Consumption  
+- 👤 User-Friendly Interface  
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🌐 Website Flow
 
-Follow these steps:
+The AriGo AirGuard Pro website is designed with a **simple, intuitive, and user-focused flow** to ensure easy navigation and quick access to critical air-quality information.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 1️⃣ Home (Landing Page)
+- Product introduction and tagline  
+- Key highlights of AriGo AirGuard Pro  
+- Call-to-action buttons:
+  - **Learn More**
+  - **View Dashboard**
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+➡️ Directs users to Features or Dashboard
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### 2️⃣ Features Page
+- Explanation of how the device works  
+- Sensor and monitoring capabilities  
+- Use cases (Home, Office, Travel)  
+- Visual cards for easy understanding  
 
-**Edit a file directly in GitHub**
+➡️ User proceeds to live data
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+### 3️⃣ Dashboard Page
+- Real-time air quality readings  
+- Air quality status:
+  - 🟢 Safe  
+  - 🟡 Moderate  
+  - 🔴 Unsafe  
+- Live updates and monitoring  
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+➡️ User observes environment conditions
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+### 4️⃣ Alerts & Notifications
+- Warning messages when air quality is unsafe  
+- Suggested actions for safety  
+- Alert visibility for quick response  
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+### 5️⃣ About Page
+- Project vision and motivation  
+- Achievement highlights  
+- Team details  
 
-Simply open [Lovable](https://lovable.dev/projects/e4112c43-50d0-4884-a450-73f78993cb9e) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+### 6️⃣ Contact / Feedback Page
+- User feedback form  
+- Suggestions and queries  
+- Confirmation on successful submission  
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### 🔁 Overall User Flow
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
