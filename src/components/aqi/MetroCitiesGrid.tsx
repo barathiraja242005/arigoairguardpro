@@ -20,19 +20,19 @@ const metroCities: CityData[] = [
 ];
 
 const getAQIColor = (aqi: number) => {
-  if (aqi <= 50) return "text-green-500";
-  if (aqi <= 100) return "text-yellow-500";
-  if (aqi <= 150) return "text-orange-500";
-  if (aqi <= 200) return "text-red-500";
-  return "text-purple-500";
+  if (aqi <= 50) return "text-aqi-good";
+  if (aqi <= 100) return "text-aqi-moderate";
+  if (aqi <= 150) return "text-aqi-unhealthy";
+  if (aqi <= 200) return "text-aqi-hazardous";
+  return "text-destructive";
 };
 
 const getAQIBg = (aqi: number) => {
-  if (aqi <= 50) return "bg-green-500/10";
-  if (aqi <= 100) return "bg-yellow-500/10";
-  if (aqi <= 150) return "bg-orange-500/10";
-  if (aqi <= 200) return "bg-red-500/10";
-  return "bg-purple-500/10";
+  if (aqi <= 50) return "bg-aqi-good/10";
+  if (aqi <= 100) return "bg-aqi-moderate/10";
+  if (aqi <= 150) return "bg-aqi-unhealthy/10";
+  if (aqi <= 200) return "bg-aqi-hazardous/10";
+  return "bg-destructive/10";
 };
 
 export const MetroCitiesGrid = () => {
@@ -57,11 +57,11 @@ export const MetroCitiesGrid = () => {
 
               <div className="grid grid-cols-2 gap-2 pt-2 border-t">
                 <div className="flex items-center gap-1.5">
-                  <Thermometer className="w-3.5 h-3.5 text-orange-500" />
+                  <Thermometer className="w-3.5 h-3.5 text-primary" />
                   <span className="text-xs font-medium">{city.temp}°C</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Droplets className="w-3.5 h-3.5 text-blue-500" />
+                  <Droplets className="w-3.5 h-3.5 text-secondary" />
                   <span className="text-xs font-medium">{city.humidity}%</span>
                 </div>
               </div>

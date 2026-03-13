@@ -38,7 +38,7 @@ export const HistoricalTrends = () => {
                 <div className="text-3xl font-bold">{data.aqi}</div>
                 <div className="text-xs text-muted-foreground">AQI</div>
                 {data.change !== undefined && (
-                  <div className={`flex items-center gap-1 text-sm ${data.trend === "down" ? "text-green-500" : "text-red-500"}`}>
+                  <div className={`flex items-center gap-1 text-sm ${data.trend === "down" ? "text-success" : "text-destructive"}`}>
                     {data.trend === "down" ? <TrendingDown className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
                     <span>{Math.abs(data.change)}% {data.trend === "down" ? "Fall" : "Rise"}</span>
                   </div>
@@ -51,7 +51,7 @@ export const HistoricalTrends = () => {
             <div className="text-sm text-muted-foreground mb-2">
               Overall Annual Percentage (%) change of AQI in (2021 to 2025)
             </div>
-            <div className={`flex items-center gap-2 text-2xl font-bold ${isImproving ? "text-green-500" : "text-red-500"}`}>
+            <div className={`flex items-center gap-2 text-2xl font-bold ${isImproving ? "text-success" : "text-destructive"}`}>
               {isImproving ? <TrendingDown className="w-6 h-6" /> : <TrendingUp className="w-6 h-6" />}
               <span>{overallChange}%</span>
               <span className="text-sm">{isImproving ? "Fall (Improved AQI)" : "Rise"}</span>
@@ -62,12 +62,12 @@ export const HistoricalTrends = () => {
             <div className="space-y-2">
               <div className="text-sm font-medium text-muted-foreground">Most Polluted</div>
               <div className="text-lg font-semibold">November, 2023</div>
-              <div className="text-2xl font-bold text-red-500">284 AQI</div>
+              <div className="text-2xl font-bold text-destructive">284 AQI</div>
             </div>
             <div className="space-y-2">
               <div className="text-sm font-medium text-muted-foreground">Least Polluted</div>
               <div className="text-lg font-semibold">August, 2024</div>
-              <div className="text-2xl font-bold text-green-500">77 AQI</div>
+              <div className="text-2xl font-bold text-success">77 AQI</div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Wind, Factory, Flame, Droplet, Zap, Sun } from "lucide-react";
+import { Wind, Factory, Flame, Droplet, Sun } from "lucide-react";
 
 interface Pollutant {
   name: string;
@@ -11,12 +11,12 @@ interface Pollutant {
 }
 
 const pollutants: Pollutant[] = [
-  { name: "Particulate Matter", shortName: "PM2.5", value: 52, unit: "µg/m³", icon: Wind, color: "text-orange-500" },
-  { name: "Particulate Matter", shortName: "PM10", value: 56, unit: "µg/m³", icon: Wind, color: "text-red-500" },
-  { name: "Carbon Monoxide", shortName: "CO", value: 1000, unit: "ppb", icon: Factory, color: "text-gray-500" },
-  { name: "Sulfur Dioxide", shortName: "SO2", value: 5, unit: "ppb", icon: Flame, color: "text-yellow-500" },
-  { name: "Nitrogen Dioxide", shortName: "NO2", value: 20, unit: "ppb", icon: Droplet, color: "text-blue-500" },
-  { name: "Ozone", shortName: "O3", value: 9, unit: "ppb", icon: Sun, color: "text-cyan-500" },
+  { name: "Particulate Matter", shortName: "PM2.5", value: 52, unit: "µg/m³", icon: Wind, color: "text-primary" },
+  { name: "Particulate Matter", shortName: "PM10", value: 56, unit: "µg/m³", icon: Wind, color: "text-destructive" },
+  { name: "Carbon Monoxide", shortName: "CO", value: 1000, unit: "ppb", icon: Factory, color: "text-muted-foreground" },
+  { name: "Sulfur Dioxide", shortName: "SO2", value: 5, unit: "ppb", icon: Flame, color: "text-warning" },
+  { name: "Nitrogen Dioxide", shortName: "NO2", value: 20, unit: "ppb", icon: Droplet, color: "text-secondary" },
+  { name: "Ozone", shortName: "O3", value: 9, unit: "ppb", icon: Sun, color: "text-accent" },
 ];
 
 export const MajorPollutants = () => {

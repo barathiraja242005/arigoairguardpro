@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import {
+  pageStyles,
+} from "@/lib/design-system";
 
 const loginSchema = z.object({
   deviceId: z.string()
@@ -80,16 +83,16 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
+    <div className={pageStyles.centeredWrapper}>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-2">
+          <h1 className={`text-4xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-2`}>
             AriGo AirGuard Pro
           </h1>
           <p className="text-muted-foreground">Connect your device to start monitoring</p>
         </div>
 
-        <Card className="border-primary/20">
+        <Card className="border-primary/20 bg-card/80 backdrop-blur-md shadow-elevated">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl flex items-center gap-2">
               <Wifi className="h-6 w-6 text-primary" />
@@ -132,8 +135,8 @@ export default function Login() {
                 )}
               </div>
 
-              <div className="text-xs text-muted-foreground bg-muted p-3 rounded-md">
-                <strong>Demo Credentials:</strong><br />
+              <div className="text-xs text-muted-foreground bg-primary/5 border border-primary/10 p-3 rounded-lg">
+                <strong className="text-primary">Demo Credentials:</strong><br />
                 Device ID: ARIGO2024<br />
                 Password: airguard123
               </div>

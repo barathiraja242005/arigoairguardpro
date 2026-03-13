@@ -1,83 +1,109 @@
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertTriangle, Info, XCircle, CheckCircle, Bell, X, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { AlertTriangle, Info, XCircle, CheckCircle, Bell, X, Trash2, Sun, Moon } from 'lucide-react';
+import {
+  pageStyles,
+  pageHeader,
+  darkModeToggle,
+  alertColors,
+  responsive,
+} from '@/lib/design-system';
 
-type AlertType = 'error' | 'warning' | 'info';
+type AlertType = 'error' | 'warning' | 'info' | 'success';
 
 interface Alert {
   id: number;
   type: AlertType;
   message: string;
   timestamp: string;
+  description?: string;
 }
 
 const mockAlerts: Alert[] = [
-    { id: 1, type: 'error', message: 'Failed to fetch sensor data from AQ-102. Sensor may be offline.', timestamp: '2023-10-27T10:00:00Z' },
-    { id: 2, type: 'warning', message: 'High CO2 levels detected in Zone 3. Recommend increasing ventilation.', timestamp: '2023-10-27T10:05:00Z' },
-    { id: 3, type: 'info', message: 'System software update v1.2.3 completed successfully.', timestamp: '2023-10-27T09:30:00Z' },
-    { id: 4, type: 'error', message: 'Authentication with cloud service failed. Please check API keys.', timestamp: '2023-10-27T08:45:00Z' },
-    { id: 5, type: 'warning', message: 'Device battery on AQ-055 is low (15%).', timestamp: '2023-10-27T11:00:00Z' },
-    { id: 6, type: 'info', message: 'New device "Lobby Sensor" added to the network.', timestamp: '2023-10-26T15:00:00Z' },
-    { id: 7, type: 'error', message: 'Network connectivity lost for the West Wing sensors.', timestamp: '2023-10-27T11:10:00Z' },
-    { id: 8, type: 'warning', message: 'Filter for HVAC unit #3 needs replacement soon.', timestamp: '2023-10-25T12:00:00Z' },
+    { id: 1, type: 'error', message: 'Sensor Offline', description: 'Failed to fetch sensor data from AQ-102. Sensor may be offline.', timestamp: '2023-10-27T10:00:00Z' },
+    { id: 2, type: 'warning', message: 'High CO2 Levels', description: 'High CO2 levels detected in Zone 3. Recommend increasing ventilation.', timestamp: '2023-10-27T10:05:00Z' },
+    { id: 3, type: 'info', message: 'System Update', description: 'System software update v1.2.3 completed successfully.', timestamp: '2023-10-27T09:30:00Z' },
+    { id: 4, type: 'error', message: 'Auth Failed', description: 'Authentication with cloud service failed. Please check API keys.', timestamp: '2023-10-27T08:45:00Z' },
+    { id: 5, type: 'warning', message: 'Low Battery', description: 'Device battery on AQ-055 is low (15%).', timestamp: '2023-10-27T11:00:00Z' },
+    { id: 6, type: 'success', message: 'Device Added', description: 'New device "Lobby Sensor" added to the network successfully.', timestamp: '2023-10-26T15:00:00Z' },
+    { id: 7, type: 'error', message: 'Network Lost', description: 'Network connectivity lost for the West Wing sensors.', timestamp: '2023-10-27T11:10:00Z' },
+    { id: 8, type: 'warning', message: 'Filter Alert', description: 'Filter for HVAC unit #3 needs replacement soon.', timestamp: '2023-10-25T12:00:00Z' },
 ];
 
-const AlertIcon = ({ type }: { type: AlertType }) => {
-    switch (type) {
-        case 'error': return <XCircle className="w-5 h-5 text-red-500" />;
-        case 'warning': return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
-        case 'info': return <Info className="w-5 h-5 text-blue-500" />;
-        default: return <Bell className="w-5 h-5 text-gray-500" />;
-    }
+const getAlertColor = (type: AlertType) => {
+  switch (type) {
+    case 'error': return 'from-red-500/20 to-red-600/20 border-red-500/30';
+    case 'warning': return 'from-amber-500/20 to-amber-600/20 border-amber-500/30';
+    case 'info': return 'from-blue-500/20 to-blue-600/20 border-blue-500/30';
+    case 'success': return 'from-green-500/20 to-green-600/20 border-green-500/30';
+    default: return 'from-gray-500/20 to-gray-600/20 border-gray-500/30';
+  }
+};
+
+const getAlertIcon = (type: AlertType) => {
+  switch (type) {
+    case 'error': return <XCircle className="w-6 h-6 text-red-500" />;
+    case 'warning': return <AlertTriangle className="w-6 h-6 text-amber-500" />;
+    case 'info': return <Info className="w-6 h-6 text-blue-500" />;
+    case 'success': return <CheckCircle className="w-6 h-6 text-green-500" />;
+    default: return <Bell className="w-6 h-6 text-gray-500" />;
+  }
 };
 
 const AlertCard = ({ alert, onDismiss }: { alert: Alert; onDismiss: (id: number) => void; }) => {
-    
-    const cardVariants = {
-        initial: { opacity: 0, y: 50, scale: 0.95 },
-        animate: { opacity: 1, y: 0, scale: 1 },
-        exit: { opacity: 0, x: -100, transition: { duration: 0.3 } },
-    };
-
     return (
         <motion.div
             layout
-            variants={cardVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
         >
-            <Card>
-                <CardContent className="p-4 flex items-start space-x-4">
-                    <div className="flex-shrink-0">
-                        <AlertIcon type={alert.type} />
+            <Card className={`bg-gradient-to-br ${getAlertColor(alert.type)} backdrop-blur-md shadow-elevated border hover:shadow-lg transition-shadow`}>
+                <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 mt-1">
+                            {getAlertIcon(alert.type)}
+                        </div>
+                        <div className="flex-grow">
+                            <h3 className="font-semibold text-foreground mb-1">{alert.message}</h3>
+                            <p className="text-sm text-muted-foreground mb-3">{alert.description}</p>
+                            <p className="text-xs text-muted-foreground/80">
+                                {new Date(alert.timestamp).toLocaleString()}
+                            </p>
+                        </div>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => onDismiss(alert.id)}
+                            className="flex-shrink-0 hover:bg-destructive/20 hover:text-destructive"
+                        >
+                            <X className="w-5 h-5" />
+                        </Button>
                     </div>
-                    <div className="flex-grow">
-                        <p className="font-semibold">{alert.message}</p>
-                        <p className="text-sm text-muted-foreground">
-                            {new Date(alert.timestamp).toLocaleString()}
-                        </p>
-                    </div>
-                    <Button variant="ghost" size="icon" onClick={() => onDismiss(alert.id)} className="flex-shrink-0">
-                        <X className="w-4 h-4" />
-                    </Button>
                 </CardContent>
             </Card>
         </motion.div>
     );
 };
 
-
 const Alerts = () => {
     const [alerts, setAlerts] = useState<Alert[]>([]);
-    const [activeTab, setActiveTab] = useState("all");
+    const [activeTab, setActiveTab] = useState<"all" | AlertType>("all");
+    const [darkMode, setDarkMode] = useState(false);
 
     useEffect(() => {
-        // Simulate fetching alerts
+        const savedMode = localStorage.getItem("darkMode");
+        const isDarkMode = savedMode === "true";
+        setDarkMode(isDarkMode);
+        if (isDarkMode) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
         setAlerts(mockAlerts.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
     }, []);
 
@@ -89,92 +115,225 @@ const Alerts = () => {
         setAlerts([]);
     };
 
-    const filteredAlerts = (type: AlertType) => alerts.filter(alert => alert.type === type);
+    const getFilteredAlerts = (type: AlertType | "all") => {
+        if (type === "all") return alerts;
+        return alerts.filter(alert => alert.type === type);
+    };
 
-    const renderAlert = (alert: Alert) => (
-        <AlertCard key={alert.id} alert={alert} onDismiss={dismissAlert} />
-    );
-    
-    const tabContent = (type: "all" | AlertType) => {
-        const alertsToShow = type === 'all' ? alerts : filteredAlerts(type);
-        const emptyStateMessages = {
-            all: "You're all caught up! All systems are running smoothly.",
-            error: "No error alerts.",
-            warning: "No warning alerts.",
-            info: "No informational alerts."
-        }
+    const errorCount = alerts.filter(a => a.type === 'error').length;
+    const warningCount = alerts.filter(a => a.type === 'warning').length;
+    const infoCount = alerts.filter(a => a.type === 'info').length;
+    const successCount = alerts.filter(a => a.type === 'success').length;
 
-        return (
-            <motion.div
-                key={type}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="mt-4"
-            >
-                {alertsToShow.length === 0 ? (
-                    <Card className="text-center p-8">
-                         <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                        <h3 className="text-xl font-semibold mb-2">
-                            {type === 'all' ? "No Active Alerts" : `No ${type} alerts`}
-                        </h3>
-                        <p className="text-muted-foreground">{emptyStateMessages[type]}</p>
-                    </Card>
-                ) : (
-                    <div className="space-y-4">
-                        <AnimatePresence>
-                            {alertsToShow.map(renderAlert)}
-                        </AnimatePresence>
-                    </div>
-                )}
-            </motion.div>
-        )
-    }
+    const filteredAlerts = getFilteredAlerts(activeTab);
+    const isEmptyState = filteredAlerts.length === 0;
 
     return (
-        <div className="container mx-auto p-4 md:p-8">
+        <div className={`${pageStyles.gradientWrapper} ${responsive.pagePadding}`}>
+          {/* Dark Mode Toggle */}
+          <div className={darkModeToggle.wrapper}>
+            <button
+              onClick={() => {
+                const newDarkMode = !darkMode;
+                setDarkMode(newDarkMode);
+                localStorage.setItem("darkMode", newDarkMode.toString());
+                if (newDarkMode) {
+                  document.documentElement.classList.add("dark");
+                } else {
+                  document.documentElement.classList.remove("dark");
+                }
+              }}
+              className={darkModeToggle.button}
+            >
+              {darkMode ? (
+                <Sun className={darkModeToggle.iconClass} />
+              ) : (
+                <Moon className={darkModeToggle.iconClass} />
+              )}
+            </button>
+          </div>
+
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8"
+            className={pageHeader.wrapper}
           >
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold tracking-tight">System Alerts</h1>
-                {alerts.length > 0 && (
-                    <Button variant="outline" onClick={dismissAll}>Clear All</Button>
-                )}
-            </div>
-            <p className="text-muted-foreground mt-1">
+            <h1 className={pageHeader.title}>System Alerts</h1>
+            <p className={pageHeader.description}>
               Monitor important events and system status
             </p>
           </motion.div>
-    
-          <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="all">All ({alerts.length})</TabsTrigger>
-              <TabsTrigger value="errors">Errors ({filteredAlerts("error").length})</TabsTrigger>
-              <TabsTrigger value="warnings">Warnings ({filteredAlerts("warning").length})</TabsTrigger>
-              <TabsTrigger value="info">Info ({filteredAlerts("info").length})</TabsTrigger>
-            </TabsList>
-            <AnimatePresence mode="wait">
-                <TabsContent value="all" forceMount>
-                    {activeTab === "all" && tabContent("all")}
-                </TabsContent>
-                <TabsContent value="errors" forceMount>
-                    {activeTab === "errors" && tabContent("error")}
-                </TabsContent>
-                <TabsContent value="warnings" forceMount>
-                    {activeTab === "warnings" && tabContent("warning")}
-                </TabsContent>
-                <TabsContent value="info" forceMount>
-                    {activeTab === "info" && tabContent("info")}
-                </TabsContent>
-            </AnimatePresence>
-          </Tabs>
+
+          {/* Alert Summary Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <Card 
+                className={`cursor-pointer bg-gradient-to-br from-red-500/10 to-red-600/10 border-red-500/30 hover:border-red-500/60 transition-all ${activeTab === 'error' ? 'border-red-500/60 shadow-lg' : ''}`}
+                onClick={() => setActiveTab('error')}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Errors</p>
+                      <p className="text-2xl font-bold text-red-500">{errorCount}</p>
+                    </div>
+                    <XCircle className="w-8 h-8 text-red-500/40" />
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card 
+                className={`cursor-pointer bg-gradient-to-br from-amber-500/10 to-amber-600/10 border-amber-500/30 hover:border-amber-500/60 transition-all ${activeTab === 'warning' ? 'border-amber-500/60 shadow-lg' : ''}`}
+                onClick={() => setActiveTab('warning')}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Warnings</p>
+                      <p className="text-2xl font-bold text-amber-500">{warningCount}</p>
+                    </div>
+                    <AlertTriangle className="w-8 h-8 text-amber-500/40" />
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card 
+                className={`cursor-pointer bg-gradient-to-br from-blue-500/10 to-blue-600/10 border-blue-500/30 hover:border-blue-500/60 transition-all ${activeTab === 'info' ? 'border-blue-500/60 shadow-lg' : ''}`}
+                onClick={() => setActiveTab('info')}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Info</p>
+                      <p className="text-2xl font-bold text-blue-500">{infoCount}</p>
+                    </div>
+                    <Info className="w-8 h-8 text-blue-500/40" />
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Card 
+                className={`cursor-pointer bg-gradient-to-br from-green-500/10 to-green-600/10 border-green-500/30 hover:border-green-500/60 transition-all ${activeTab === 'success' ? 'border-green-500/60 shadow-lg' : ''}`}
+                onClick={() => setActiveTab('success')}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Success</p>
+                      <p className="text-2xl font-bold text-green-500">{successCount}</p>
+                    </div>
+                    <CheckCircle className="w-8 h-8 text-green-500/40" />
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+
+          {/* Alert Filter Buttons */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            <Button
+              variant={activeTab === "all" ? "default" : "outline"}
+              onClick={() => setActiveTab("all")}
+              className="rounded-lg"
+            >
+              All ({alerts.length})
+            </Button>
+            <Button
+              variant={activeTab === "error" ? "destructive" : "outline"}
+              onClick={() => setActiveTab("error")}
+              className="rounded-lg"
+            >
+              <XCircle className="w-4 h-4 mr-2" />
+              Errors ({errorCount})
+            </Button>
+            <Button
+              variant={activeTab === "warning" ? "default" : "outline"}
+              onClick={() => setActiveTab("warning")}
+              className="rounded-lg"
+            >
+              <AlertTriangle className="w-4 h-4 mr-2" />
+              Warnings ({warningCount})
+            </Button>
+            <Button
+              variant={activeTab === "info" ? "default" : "outline"}
+              onClick={() => setActiveTab("info")}
+              className="rounded-lg"
+            >
+              <Info className="w-4 h-4 mr-2" />
+              Info ({infoCount})
+            </Button>
+            {alerts.length > 0 && (
+              <Button 
+                variant="ghost" 
+                onClick={dismissAll}
+                className="ml-auto text-destructive hover:bg-destructive/10"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Clear All
+              </Button>
+            )}
+          </div>
+
+          {/* Alerts List */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            {isEmptyState ? (
+              <Card className="bg-card/80 backdrop-blur-md shadow-elevated border-border/50 rounded-2xl">
+                <CardContent className="p-12 text-center">
+                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-foreground mb-2">
+                    {activeTab === "all" ? "All Systems Operational" : `No ${activeTab} alerts`}
+                  </h3>
+                  <p className="text-muted-foreground">
+                    {activeTab === "all" 
+                      ? "You're all caught up! All systems are running smoothly."
+                      : `No ${activeTab} alerts at this time.`
+                    }
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                <AnimatePresence>
+                  {filteredAlerts.map(alert => (
+                    <AlertCard 
+                      key={alert.id} 
+                      alert={alert} 
+                      onDismiss={dismissAlert} 
+                    />
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
+          </motion.div>
         </div>
-      );
-    };
+    );
+};
 
 export default Alerts;
+

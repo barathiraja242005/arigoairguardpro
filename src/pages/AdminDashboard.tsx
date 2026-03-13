@@ -16,6 +16,13 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { startFluctuation, stopFluctuation } from "@/lib/uploadData";
+import {
+  pageStyles,
+  navStyles,
+  darkModeToggle,
+  gridStyles,
+  typography,
+} from "@/lib/design-system";
 
 interface Device {
   id: string;
@@ -61,9 +68,9 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="bg-card shadow-sm px-6 h-16 flex items-center justify-between border-b">
-        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+    <div className={pageStyles.wrapper}>
+      <header className={navStyles.header}>
+        <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">Admin Dashboard</h1>
         <div className="flex items-center gap-4">
           <button
             onClick={() => {
@@ -76,12 +83,12 @@ const AdminDashboard = () => {
                 document.documentElement.classList.remove("dark");
               }
             }}
-            className="p-2 rounded-full border border-border bg-card hover:bg-accent transition-colors"
+            className={darkModeToggle.button}
           >
             {darkMode ? (
-              <Sun className="h-5 w-5 text-foreground" />
+              <Sun className={darkModeToggle.iconClass} />
             ) : (
-              <Moon className="h-5 w-5 text-foreground" />
+              <Moon className={darkModeToggle.iconClass} />
             )}
           </button>
           <Button variant="ghost" size="sm" onClick={startFluctuation}>
@@ -99,7 +106,7 @@ const AdminDashboard = () => {
         </div>
       </header>
       <main className="p-8 space-y-8">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className={gridStyles.stats}>
           {summaryData.map((data) => (
             <InfoCard key={data.title} {...data} />
           ))}
@@ -107,7 +114,7 @@ const AdminDashboard = () => {
 
         <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-8">
-                <h2 className="text-xl font-semibold text-muted-foreground">Device Details</h2>
+                <h2 className={typography.sectionTitle}>Device Details</h2>
                 <div className="grid gap-8 md:grid-cols-2">
                     {devices.map(device => (
                         <DeviceDetails key={device.id} device={device} />
@@ -115,7 +122,7 @@ const AdminDashboard = () => {
                 </div>
             </div>
             <div className="space-y-8">
-                <h2 className="text-xl font-semibold text-muted-foreground">Overall AQI Trends</h2>
+                <h2 className={typography.sectionTitle}>Overall AQI Trends</h2>
                 <AqiTrends />
             </div>
         </div>

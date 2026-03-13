@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Circle } from "lucide-react";
+import { getDeviceStatusColor } from "@/lib/design-system";
 
 interface DeviceDetailsProps {
   device: {
@@ -13,9 +14,7 @@ interface DeviceDetailsProps {
 }
 
 const DeviceDetails = ({ device }: DeviceDetailsProps) => {
-  const getStatusColor = () => {
-    return device.status === "Online" ? "text-green-500" : "text-red-500";
-  };
+  const statusColor = getDeviceStatusColor(device.status);
 
   return (
     <Card>
@@ -23,7 +22,7 @@ const DeviceDetails = ({ device }: DeviceDetailsProps) => {
         <CardTitle className="flex items-center justify-between">
           <span>{device.name}</span>
           <Badge variant={device.status === "Online" ? "default" : "destructive"}>
-            <Circle className={`mr-2 h-2 w-2 ${getStatusColor()}`} fill="currentColor" />
+            <Circle className={`mr-2 h-2 w-2 ${statusColor}`} fill="currentColor" />
             {device.status}
           </Badge>
         </CardTitle>

@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -18,16 +18,22 @@ module.exports = {
     },
     extend: {
       backgroundImage: {
-        "gradient-primary": "linear-gradient(to right, #4F46E5, #818CF8)",
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-hero": "var(--gradient-hero)",
+        "gradient-glass": "var(--gradient-glass)",
+        "gradient-aqi-good": "var(--gradient-aqi-good)",
+        "gradient-aqi-moderate": "var(--gradient-aqi-moderate)",
+        "gradient-aqi-poor": "var(--gradient-aqi-poor)",
+        "gradient-earth": "var(--gradient-earth)",
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       },
       boxShadow: {
-        glow: "0 0 15px 5px rgba(79, 70, 229, 0.4)",
-        elevated: "0px 10px 20px rgba(0, 0, 0, 0.1)",
-        card: "0px 5px 15px rgba(0, 0, 0, 0.05)",
+        glow: "var(--shadow-glow)",
+        elevated: "var(--shadow-elevated)",
+        card: "var(--shadow-card)",
       },
       colors: {
-        "earth-olive": "#556B2F",
+        "earth-olive": "hsl(var(--earth-olive))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -41,13 +47,21 @@ module.exports = {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        aqi: {
+          good: "hsl(var(--aqi-good))",
+          moderate: "hsl(var(--aqi-moderate))",
+          unhealthy: "hsl(var(--aqi-unhealthy))",
+          hazardous: "hsl(var(--aqi-hazardous))",
+        },
+        earth: {
+          brown: "hsl(var(--earth-brown))",
+          olive: "hsl(var(--earth-olive))",
+        },
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
-        },
-        warning: {
-          DEFAULT: "hsl(var(--warning))",
-          foreground: "hsl(var(--warning-foreground))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -65,10 +79,20 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
       },
       borderRadius: {
-        lg: `var(--radius)`,
-        md: `calc(var(--radius) - 2px)`,
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
@@ -88,4 +112,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

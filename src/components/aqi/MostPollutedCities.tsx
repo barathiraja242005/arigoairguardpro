@@ -33,11 +33,11 @@ const getStatusColor = (status: string) => {
 };
 
 const getAQIColor = (aqi: number) => {
-  if (aqi <= 50) return "text-green-500";
-  if (aqi <= 100) return "text-yellow-500";
-  if (aqi <= 150) return "text-orange-500";
-  if (aqi <= 200) return "text-red-500";
-  return "text-purple-500";
+  if (aqi <= 50) return "text-aqi-good";
+  if (aqi <= 100) return "text-aqi-moderate";
+  if (aqi <= 150) return "text-aqi-unhealthy";
+  if (aqi <= 200) return "text-aqi-hazardous";
+  return "text-destructive";
 };
 
 export const MostPollutedCities = () => {

@@ -1,30 +1,11 @@
 import { motion } from "framer-motion";
+import { getAqiTextColor, getAqiLabel, getAqiGradient } from "@/lib/design-system";
 
 interface AQIGaugeProps {
   value: number;
 }
 
 const AQIGauge = ({ value }: AQIGaugeProps) => {
-  const getAQIColor = (aqi: number) => {
-    if (aqi <= 50) return "text-aqi-good";
-    if (aqi <= 100) return "text-aqi-moderate";
-    if (aqi <= 150) return "text-aqi-unhealthy";
-    return "text-aqi-hazardous";
-  };
-
-  const getAQILabel = (aqi: number) => {
-    if (aqi <= 50) return "Good";
-    if (aqi <= 100) return "Moderate";
-    if (aqi <= 150) return "Unhealthy for Sensitive Groups";
-    return "Unhealthy";
-  };
-
-  const getAQIGradient = (aqi: number) => {
-    if (aqi <= 50) return "bg-gradient-aqi-good";
-    if (aqi <= 100) return "bg-gradient-aqi-moderate";
-    return "bg-gradient-aqi-poor";
-  };
-
   const circumference = 2 * Math.PI * 120;
   const progress = (value / 200) * circumference;
 
@@ -61,18 +42,18 @@ const AQIGauge = ({ value }: AQIGaugeProps) => {
             <linearGradient id="aqiGradient" x1="0%" y1="0%" x2="100%" y2="0%">
               {value <= 50 ? (
                 <>
-                  <stop offset="0%" stopColor="hsl(122, 39%, 49%)" />
-                  <stop offset="100%" stopColor="hsl(88, 50%, 60%)" />
+                  <stop offset="0%" stopColor="hsl(152, 56%, 40%)" />
+                  <stop offset="100%" stopColor="hsl(145, 35%, 42%)" />
                 </>
               ) : value <= 100 ? (
                 <>
-                  <stop offset="0%" stopColor="hsl(54, 100%, 62%)" />
-                  <stop offset="100%" stopColor="hsl(32, 100%, 50%)" />
+                  <stop offset="0%" stopColor="hsl(42, 90%, 50%)" />
+                  <stop offset="100%" stopColor="hsl(12, 85%, 50%)" />
                 </>
               ) : (
                 <>
-                  <stop offset="0%" stopColor="hsl(32, 100%, 50%)" />
-                  <stop offset="100%" stopColor="hsl(4, 90%, 58%)" />
+                  <stop offset="0%" stopColor="hsl(12, 85%, 50%)" />
+                  <stop offset="100%" stopColor="hsl(355, 75%, 50%)" />
                 </>
               )}
             </linearGradient>
@@ -87,7 +68,7 @@ const AQIGauge = ({ value }: AQIGaugeProps) => {
             transition={{ delay: 0.5, type: "spring" }}
             className="text-center"
           >
-            <div className={`text-5xl font-bold ${getAQIColor(value)}`}>
+            <div className={`text-5xl font-bold ${getAqiTextColor(value)}`}>
               {value}
             </div>
             <div className="text-sm text-muted-foreground mt-1">AQI</div>
@@ -100,9 +81,9 @@ const AQIGauge = ({ value }: AQIGaugeProps) => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
-        className={`px-6 py-3 rounded-full ${getAQIGradient(value)} text-white font-semibold shadow-lg`}
+        className={`px-6 py-3 rounded-full ${getAqiGradient(value)} text-white font-semibold shadow-lg`}
       >
-        {getAQILabel(value)}
+        {getAqiLabel(value)}
       </motion.div>
 
       {/* Legend */}

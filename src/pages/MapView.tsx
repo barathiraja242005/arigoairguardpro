@@ -1,257 +1,226 @@
-import { motion } from "framer-motion";
-import { Card } from "@/components/ui/card";
-import { TrendingUp, MapPin, Navigation } from "lucide-react";
-import InteractiveMap, { calculateAQI } from "@/components/map/InteractiveMap";
-import { useState, useEffect } from "react";
-import { MetroCitiesGrid } from "@/components/aqi/MetroCitiesGrid";
-import { MajorPollutants } from "@/components/aqi/MajorPollutants";
-import { HistoricalTrends } from "@/components/aqi/HistoricalTrends";
-import { MostPollutedCities } from "@/components/aqi/MostPollutedCities";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+/**
+ * MapView — Role Selector Hub
+ * Landing page for the pollution monitoring portal.
+ * Users choose between NGO Login (state-specific) or Admin Login (all states).
+ */
 
-interface NearbyLocation {
-  name: string;
-  aqi: number;
-  status: string;
-  distance?: number;
-}
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import {
+  TreePine,
+  Shield,
+  ArrowRight,
+  Wind,
+  MapPin,
+  BarChart3,
+  MessageCircle,
+  Globe,
+  Activity,
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { pageStyles } from "@/lib/design-system";
+import { indianStates, getAqiColor } from "@/lib/statePollutionData";
 
 const MapView = () => {
-  const [nearbyLocations, setNearbyLocations] = useState<NearbyLocation[]>([]);
-  const [avgAQI, setAvgAQI] = useState(0);
-  const [bestLocation, setBestLocation] = useState("Loading...");
-  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const handleLocationClick = (locationName: string) => {
-    setSelectedLocation(locationName);
-    // Call the global function to select location on map
-    if ((window as any).selectMapLocation) {
-      (window as any).selectMapLocation(locationName);
-    }
-  };
+  const avgAqi = Math.round(
+    indianStates.reduce((s, st) => s + st.aqi, 0) / indianStates.length
+  );
+  const topPolluted = [...indianStates].sort((a, b) => b.aqi - a.aqi).slice(0, 5);
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const generateLocalData = () => {
-          const locationNames = [
-            "City Center Monitor",
-            "Industrial Zone",
-            "Residential Area",
-            "Green Park Station",
-            "Highway Junction"
-          ];
-          
-          return locationNames.map(name => {
-            const pm25 = Math.random() * 70 + 15;
-            const aqi = calculateAQI(pm25);
-            let status = "Good";
-            if (aqi > 100) status = "Unhealthy";
-            else if (aqi > 50) status = "Moderate";
-            
-            return { name, aqi, status };
-          });
-        };
-
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-          
-          const response = await fetch(
-            `https://api.openaq.org/v2/latest?limit=5&radius=25000&coordinates=${position.coords.latitude},${position.coords.longitude}&order_by=distance`,
-            { 
-              signal: controller.signal,
-              mode: 'cors'
-            }
-          );
-          
-          clearTimeout(timeoutId);
-          
-          if (!response.ok) throw new Error('API error');
-          
-          const data = await response.json();
-          
-          if (data.results && data.results.length > 0) {
-            const locations = data.results.map((result: any) => {
-              const pm25 = result.measurements?.find((m: any) => m.parameter === 'pm25')?.value;
-              const pm10 = result.measurements?.find((m: any) => m.parameter === 'pm10')?.value;
-              const aqi = calculateAQI(pm25, pm10);
-              
-              let status = "Good";
-              if (aqi > 100) status = "Unhealthy";
-              else if (aqi > 50) status = "Moderate";
-              
-              return {
-                name: result.location,
-                aqi,
-                status,
-              };
-            }).filter((loc: NearbyLocation) => loc.aqi > 0);
-            
-            if (locations.length > 0) {
-              setNearbyLocations(locations);
-              
-              const avg = Math.round(locations.reduce((sum: number, loc: NearbyLocation) => sum + loc.aqi, 0) / locations.length);
-              setAvgAQI(avg);
-              
-              const best = locations.reduce((min: NearbyLocation, loc: NearbyLocation) => loc.aqi < min.aqi ? loc : min);
-              setBestLocation(best.name);
-              return;
-            }
-          }
-          
-          throw new Error('No results');
-          
-        } catch (error) {
-          console.log("Using simulated data:", error);
-          const locations = generateLocalData();
-          setNearbyLocations(locations);
-          
-          const avg = Math.round(locations.reduce((sum: number, loc: NearbyLocation) => sum + loc.aqi, 0) / locations.length);
-          setAvgAQI(avg);
-          
-          const best = locations.reduce((min: NearbyLocation, loc: NearbyLocation) => loc.aqi < min.aqi ? loc : min);
-          setBestLocation(best.name);
-        }
-      });
-    }
-  }, []);
+  const roles = [
+    {
+      title: "NGO Portal",
+      subtitle: "State-Level Monitoring",
+      description:
+        "Login as an NGO to access detailed pollution data for your assigned state. Get AI-powered reduction strategies and actionable insights.",
+      icon: TreePine,
+      route: "/ngo-login",
+      gradient: "from-green-500/10 to-emerald-500/10",
+      borderHover: "hover:border-green-500/40",
+      iconColor: "text-green-600",
+      features: [
+        { icon: MapPin, text: "State-specific pollution data" },
+        { icon: MessageCircle, text: "AI chatbot for reduction strategies" },
+        { icon: BarChart3, text: "Pollutant level analytics" },
+      ],
+    },
+    {
+      title: "Admin Portal",
+      subtitle: "All-India Dashboard",
+      description:
+        "Login as an administrator to view pollution data across all Indian states. Sort, filter, and analyze nationwide air quality trends.",
+      icon: Shield,
+      route: "/admin-login",
+      gradient: "from-primary/10 to-accent/10",
+      borderHover: "hover:border-primary/40",
+      iconColor: "text-primary",
+      features: [
+        { icon: Globe, text: "29 states overview" },
+        { icon: Activity, text: "Real-time AQI tracking" },
+        { icon: BarChart3, text: "Comparative analysis tools" },
+      ],
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-8 text-center"
-      >
-        <h1 className="text-4xl font-bold mb-2">Air Quality Index Dashboard</h1>
-        <p className="text-muted-foreground">
-          Real-time air quality monitoring across India
-        </p>
-      </motion.div>
+    <div className={`${pageStyles.wrapper} relative overflow-hidden`}>
+      {/* Background decorations */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-accent/5 blur-3xl" />
+      </div>
 
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Metro Cities Grid */}
-        <MetroCitiesGrid />
-
-        {/* Main Content Tabs */}
-        <Tabs defaultValue="map" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="map">Map View</TabsTrigger>
-            <TabsTrigger value="pollutants">Pollutants</TabsTrigger>
-            <TabsTrigger value="trends">Trends</TabsTrigger>
-            <TabsTrigger value="rankings">Rankings</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="map" className="space-y-6 mt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <Card className="p-0 h-[600px] overflow-hidden">
-                  <InteractiveMap />
-                </Card>
-              </div>
-
-              <div className="space-y-6">
-                <Card className="p-6">
-                  <h3 className="font-semibold mb-4 flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-primary" />
-                    Nearby Stations
-                  </h3>
-                  <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                    {nearbyLocations.length > 0 ? nearbyLocations.map((location, index) => (
-                      <motion.div
-                        key={location.name}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        onClick={() => handleLocationClick(location.name)}
-                        className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
-                          selectedLocation === location.name
-                            ? "border-primary bg-primary/10 shadow-lg scale-105"
-                            : "border-border hover:border-primary/50 hover:shadow-card hover:scale-102"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2 flex-1">
-                            <Navigation className={`w-4 h-4 transition-colors ${
-                              selectedLocation === location.name ? "text-primary" : "text-muted-foreground"
-                            }`} />
-                            <span className="font-medium text-sm">{location.name}</span>
-                          </div>
-                          <span className="text-xs text-muted-foreground px-2 py-1 rounded-full bg-muted">
-                            {location.status}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                              className={`h-full transition-all ${
-                                location.aqi <= 50
-                                  ? "bg-aqi-good"
-                                  : location.aqi <= 100
-                                  ? "bg-aqi-moderate"
-                                  : "bg-aqi-hazardous"
-                              }`}
-                              style={{ width: `${(location.aqi / 200) * 100}%` }}
-                            />
-                          </div>
-                          <span className="text-sm font-semibold min-w-[40px] text-right">{location.aqi}</span>
-                        </div>
-                        {selectedLocation === location.name && (
-                          <motion.p
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            className="text-xs text-primary mt-2 flex items-center gap-1"
-                          >
-                            <MapPin className="w-3 h-3" />
-                            Click on map marker for details
-                          </motion.p>
-                        )}
-                      </motion.div>
-                    )) : (
-                      <div className="text-center text-muted-foreground py-8">
-                        <p className="text-sm">Loading nearby stations...</p>
-                      </div>
-                    )}
-                  </div>
-                </Card>
-
-                <Card className="p-6">
-                  <h3 className="font-semibold mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-primary" />
-                    Area Statistics
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Average AQI</span>
-                      <span className="font-semibold">{avgAQI || "..."}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Best Location</span>
-                      <span className="font-semibold text-xs">{bestLocation}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Stations Found</span>
-                      <span className="font-semibold">{nearbyLocations.length}</span>
-                    </div>
-                  </div>
-                </Card>
-              </div>
+      <div className="container mx-auto px-4 py-12 relative z-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
+        >
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+              <Wind className="h-7 w-7 text-primary" />
             </div>
-          </TabsContent>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+            Air Quality{" "}
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Monitoring Portal
+            </span>
+          </h1>
+          <p className="text-muted-foreground max-w-lg mx-auto">
+            Choose your role to access state-level pollution data, AI-driven insights, and
+            comprehensive air quality analytics across India.
+          </p>
+        </motion.div>
 
-          <TabsContent value="pollutants" className="mt-6">
-            <MajorPollutants />
-          </TabsContent>
+        {/* National AQI Summary Strip */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="flex flex-wrap items-center justify-center gap-6 mb-10 p-4 rounded-2xl bg-card border border-border/50"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">National Avg AQI</span>
+            <span
+              className="text-lg font-bold px-2.5 py-0.5 rounded-lg text-white"
+              style={{ backgroundColor: getAqiColor(avgAqi) }}
+            >
+              {avgAqi}
+            </span>
+          </div>
+          <div className="hidden sm:block h-6 w-px bg-border" />
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">States Monitored</span>
+            <span className="text-lg font-bold text-foreground">{indianStates.length}</span>
+          </div>
+          <div className="hidden sm:block h-6 w-px bg-border" />
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Most Polluted</span>
+            <span className="text-sm font-semibold text-destructive">
+              {topPolluted[0]?.state} ({topPolluted[0]?.aqi})
+            </span>
+          </div>
+        </motion.div>
 
-          <TabsContent value="trends" className="mt-6">
-            <HistoricalTrends />
-          </TabsContent>
+        {/* Role Selection Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
+          {roles.map((role, idx) => (
+            <motion.div
+              key={role.title}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 + idx * 0.1, duration: 0.5 }}
+            >
+              <Card
+                className={`relative overflow-hidden border-border/50 cursor-pointer transition-all duration-300 ${role.borderHover} hover:shadow-xl group`}
+                onClick={() => navigate(role.route)}
+              >
+                {/* Gradient bg */}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${role.gradient} opacity-50 group-hover:opacity-100 transition-opacity`}
+                />
 
-          <TabsContent value="rankings" className="mt-6">
-            <MostPollutedCities />
-          </TabsContent>
-        </Tabs>
+                <CardContent className="relative p-8">
+                  {/* Icon + Title */}
+                  <div className="flex items-start gap-4 mb-5">
+                    <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-background/80 border border-border/50 ${role.iconColor}`}>
+                      <role.icon className="h-7 w-7" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                        {role.title}
+                      </h2>
+                      <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                        {role.subtitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+                    {role.description}
+                  </p>
+
+                  {/* Feature List */}
+                  <div className="space-y-2.5 mb-6">
+                    {role.features.map((feat) => (
+                      <div key={feat.text} className="flex items-center gap-2.5">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-background/80 border border-border/30">
+                          <feat.icon className="h-3.5 w-3.5 text-muted-foreground" />
+                        </div>
+                        <span className="text-sm text-foreground">{feat.text}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* CTA */}
+                  <div className="flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
+                    Login to {role.title}
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Top Polluted States Quick View */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="max-w-4xl mx-auto"
+        >
+          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 text-center">
+            Top 5 Most Polluted States
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {topPolluted.map((state, i) => (
+              <motion.div
+                key={state.code}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5 + i * 0.05 }}
+                className="flex items-center gap-2.5 rounded-xl border border-border/50 bg-card p-3"
+              >
+                <div
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white text-xs font-bold"
+                  style={{ backgroundColor: getAqiColor(state.aqi) }}
+                >
+                  {state.aqi}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-foreground truncate">{state.state}</p>
+                  <p className="text-[10px] text-muted-foreground">{state.status}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </div>
   );

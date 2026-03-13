@@ -63,15 +63,15 @@ const PollutantChart = () => {
       </ResponsiveContainer>
 
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center gap-4">
-          <CheckCircle className="w-8 h-8 text-green-500" />
+        <div className="p-4 rounded-lg bg-success/10 border border-success/20 flex items-center gap-4">
+          <CheckCircle className="w-8 h-8 text-success" />
           <div>
             <p className="font-semibold text-lg">Within Safe Limits</p>
             <p className="text-sm text-muted-foreground">5 of 7 pollutants</p>
           </div>
         </div>
-        <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center gap-4">
-          <AlertTriangle className="w-8 h-8 text-yellow-500" />
+        <div className="p-4 rounded-lg bg-warning/10 border border-warning/20 flex items-center gap-4">
+          <AlertTriangle className="w-8 h-8 text-warning" />
           <div>
             <p className="font-semibold text-lg">Needs Attention</p>
             <p className="text-sm text-muted-foreground">2 pollutants</p>

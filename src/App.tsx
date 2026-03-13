@@ -12,8 +12,12 @@ import Alerts from "./pages/Alerts";
 import Settings from "./pages/Settings";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import NGOLogin from "./pages/NGOLogin";
+import NGODashboard from "./pages/NGODashboard";
+import AdminPollutionMap from "./pages/AdminPollutionMap";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import NotFound from "./pages/NotFound";
+import GlobalAIChatbot from "./components/chat/GlobalAIChatbot";
 
 const queryClient = new QueryClient();
 
@@ -35,8 +39,12 @@ const App = () => (
             <Route path="/settings" element={<Settings />} />
           </Route>
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/ngo-login" element={<NGOLogin />} />
+          <Route path="/ngo-dashboard" element={<NGODashboard />} />
+          <Route path="/admin-pollution-map" element={<AdminPollutionMap />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <GlobalAIChatbot />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

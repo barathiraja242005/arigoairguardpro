@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { useFluctuatingValue } from "@/hooks/useFluctuatingValue";
 
 const FluctuatingPollutantLevels = () => {
@@ -15,6 +14,7 @@ const FluctuatingPollutantLevels = () => {
       unit: "µg/m³",
       max: 50,
       color: "bg-primary",
+      trackColor: "bg-border",
     },
     {
       name: "PM10",
@@ -22,6 +22,7 @@ const FluctuatingPollutantLevels = () => {
       unit: "µg/m³",
       max: 100,
       color: "bg-secondary",
+      trackColor: "bg-border",
     },
     {
       name: "CO₂",
@@ -29,6 +30,7 @@ const FluctuatingPollutantLevels = () => {
       unit: "ppm",
       max: 1000,
       color: "bg-accent",
+      trackColor: "bg-border",
     },
     {
       name: "VOC",
@@ -36,25 +38,28 @@ const FluctuatingPollutantLevels = () => {
       unit: "ppb",
       max: 200,
       color: "bg-warning",
+      trackColor: "bg-border",
     },
   ];
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {pollutants.map((pollutant) => (
-        <Card key={pollutant.name} className="p-4">
+        <Card key={pollutant.name} className="p-4 border-border/50 shadow-card">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium">{pollutant.name}</h3>
             <span className="text-xs text-muted-foreground">
               {pollutant.unit}
             </span>
           </div>
-          <p className="text-2xl font-bold mb-2">{pollutant.value.toFixed(1)}</p>
-          <Progress
-            value={(pollutant.value / pollutant.max) * 100}
-            className="h-2"
-          />
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-2xl font-bold mb-3">{pollutant.value.toFixed(1)}</p>
+          <div className={`relative h-2 w-full overflow-hidden rounded-full ${pollutant.trackColor}`}>
+            <div
+              className={`h-full rounded-full ${pollutant.color} transition-all duration-700 ease-out`}
+              style={{ width: `${Math.min((pollutant.value / pollutant.max) * 100, 100)}%` }}
+            />
+          </div>
+          <p className="text-xs text-muted-foreground mt-1.5">
             Max: {pollutant.max} {pollutant.unit}
           </p>
         </Card>

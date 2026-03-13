@@ -78,10 +78,13 @@ export default {
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',
+        'gradient-hero': 'var(--gradient-hero)',
+        'gradient-glass': 'var(--gradient-glass)',
         'gradient-aqi-good': 'var(--gradient-aqi-good)',
         'gradient-aqi-moderate': 'var(--gradient-aqi-moderate)',
         'gradient-aqi-poor': 'var(--gradient-aqi-poor)',
         'gradient-earth': 'var(--gradient-earth)',
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
       boxShadow: {
         'glow': 'var(--shadow-glow)',
@@ -118,8 +121,8 @@ export default {
           "100%": { transform: "scale(1)", opacity: "1" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(195 92% 64% / 0.3)" },
-          "50%": { boxShadow: "0 0 40px hsl(195 92% 64% / 0.6)" },
+          "0%, 100%": { boxShadow: "0 0 20px hsl(25 95% 53% / 0.3)" },
+          "50%": { boxShadow: "0 0 40px hsl(25 95% 53% / 0.5)" },
         },
         "spin-slow": {
           "0%": { transform: "rotate(0deg)" },

@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { pageStyles } from '@/lib/design-system';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
@@ -14,18 +15,18 @@ const AdminLogin = () => {
 
   const handleLogin = () => {
     if (username === 'admin' && password === 'admin@123') {
-      navigate('/admin-dashboard');
+      navigate('/admin-pollution-map');
     } else {
       setError('Invalid username or password');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/40 p-4">
+    <div className={pageStyles.centeredWrapper}>
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
-        <Card className="w-full max-w-sm">
+        <Card className="w-full max-w-sm bg-card/80 backdrop-blur-md shadow-elevated border-primary/10">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>
+            <CardTitle className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">Admin Login</CardTitle>
             <CardDescription>Enter credentials to access the admin dashboard.</CardDescription>
           </CardHeader>
           <CardContent>

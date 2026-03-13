@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Cloud, Droplets, Wind, Flame, AlertCircle } from "lucide-react";
+import { getStatusTextColor } from "@/lib/design-system";
 
 interface Pollutant {
   name: string;
@@ -20,13 +21,6 @@ const PollutantLevels = () => {
     { name: "Ozone", symbol: "O₃", value: 45, unit: "μg/m³", limit: 100, icon: Cloud },
     { name: "VOCs", symbol: "VOCs", value: 180, unit: "ppb", limit: 500, icon: AlertCircle },
   ];
-
-  const getStatusColor = (value: number, limit: number) => {
-    const percentage = (value / limit) * 100;
-    if (percentage < 50) return "text-aqi-good";
-    if (percentage < 80) return "text-aqi-moderate";
-    return "text-aqi-hazardous";
-  };
 
   const getStatusBg = (value: number, limit: number) => {
     const percentage = (value / limit) * 100;
@@ -55,7 +49,7 @@ const PollutantLevels = () => {
             <Card className={`p-4 border ${getStatusBg(pollutant.value, pollutant.limit)}`}>
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <div className={`p-2 rounded-lg bg-card ${getStatusColor(pollutant.value, pollutant.limit)}`}>
+                  <div className={`p-2 rounded-lg bg-card ${getStatusTextColor(percentage)}`}>
                     <Icon className="w-4 h-4" />
                   </div>
                   <div>
@@ -64,7 +58,7 @@ const PollutantLevels = () => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className={`text-lg font-bold ${getStatusColor(pollutant.value, pollutant.limit)}`}>
+                  <div className={`text-lg font-bold ${getStatusTextColor(percentage)}`}>
                     {pollutant.value}
                   </div>
                   <div className="text-xs text-muted-foreground">{pollutant.unit}</div>
@@ -72,7 +66,7 @@ const PollutantLevels = () => {
               </div>
               
               {/* Progress Bar */}
-              <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+              <div className="relative h-2.5 rounded-full overflow-hidden bg-border">
                 <motion.div
                   className={`absolute inset-y-0 left-0 rounded-full ${
                     percentage < 50

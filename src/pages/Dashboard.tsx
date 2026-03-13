@@ -8,6 +8,16 @@ import FluctuatingPollutantLevels from "@/components/dashboard/FluctuatingPollut
 import ByproductStats from "@/components/dashboard/ByproductStats";
 import { Wind, Droplets, Leaf, Zap, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
+import {
+  pageStyles,
+  pageHeader,
+  cardStyles,
+  darkModeToggle,
+  gridStyles,
+  typography,
+  containerVariants,
+  cardVariants,
+} from "@/lib/design-system";
 
 const Dashboard = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -24,25 +34,6 @@ const Dashboard = () => {
     }
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
-
   const stats = [
     { icon: Wind, label: "Air Flow", value: "250 m³/h", color: "text-primary" },
     { icon: Droplets, label: "Humidity", value: "45%", color: "text-secondary" },
@@ -51,8 +42,8 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="absolute top-4 right-4">
+    <div className={pageStyles.wrapper}>
+      <div className={darkModeToggle.wrapper}>
         <button
           onClick={() => {
             const newDarkMode = !darkMode;
@@ -64,24 +55,25 @@ const Dashboard = () => {
               document.documentElement.classList.remove("dark");
             }
           }}
-          className="p-2 rounded-full border border-border bg-card hover:bg-accent transition-colors"
+          className={darkModeToggle.button}
+          aria-label="Toggle dark mode"
         >
           {darkMode ? (
-            <Sun className="h-5 w-5" />
+            <Sun className={darkModeToggle.iconClass} />
           ) : (
-            <Moon className="h-5 w-5" />
+            <Moon className={darkModeToggle.iconClass} />
           )}
         </button>
       </div>
-      <div className="container mx-auto px-4 py-8">
+      <div className={pageStyles.container}>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 mt-12"
+          className={`${pageHeader.wrapper} mt-12`}
         >
-          <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">
+          <h1 className={pageHeader.title}>Dashboard</h1>
+          <p className={pageHeader.description}>
             Real-time air quality monitoring and device status
           </p>
         </motion.div>
@@ -91,13 +83,13 @@ const Dashboard = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+          className={`${gridStyles.stats} mb-8`}
         >
           {stats.map((stat, index) => (
             <motion.div key={index} variants={cardVariants}>
-              <Card className="p-4 hover:shadow-card transition-shadow bg-card">
+              <Card className={`${cardStyles.paddingSm} ${cardStyles.interactive}`}>
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg bg-muted ${stat.color}`}>
+                  <div className={`p-2.5 rounded-xl bg-gradient-glass border border-border/50 ${stat.color}`}>
                     <stat.icon className="w-5 h-5" />
                   </div>
                   <div>
@@ -117,7 +109,7 @@ const Dashboard = () => {
           transition={{ delay: 0.3 }}
           className="mb-8"
         >
-          <h2 className="text-2xl font-semibold mb-4">Pollutant Levels</h2>
+          <h2 className={typography.sectionTitle}>Pollutant Levels</h2>
           <FluctuatingPollutantLevels />
         </motion.div>
 
@@ -126,24 +118,24 @@ const Dashboard = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+          className={gridStyles.dashboard}
         >
           {/* AQI Gauge - Takes 2 columns on large screens */}
           <motion.div variants={cardVariants} className="lg:col-span-2">
-            <Card className="p-6 h-full bg-card">
-              <h2 className="text-xl font-semibold mb-6">Air Quality Index</h2>
+            <Card className={`${cardStyles.padding} h-full ${cardStyles.base} shadow-card`}>
+              <h2 className={`${typography.cardTitle} mb-6 bg-gradient-hero bg-clip-text text-transparent`}>Air Quality Index</h2>
               <AQIGauge value={65} />
             </Card>
           </motion.div>
 
           {/* Battery and Filter Health */}
           <motion.div variants={cardVariants} className="space-y-6">
-            <Card className="p-6 bg-card">
-              <h2 className="text-xl font-semibold mb-4">Battery Status</h2>
+            <Card className={`${cardStyles.padding} ${cardStyles.base} shadow-card`}>
+              <h2 className={`${typography.cardTitle} mb-4`}>Battery Status</h2>
               <FluctuatingBatteryStatus basePercentage={78} />
             </Card>
-            <Card className="p-6 bg-card">
-              <h2 className="text-xl font-semibold mb-4">Filter Health</h2>
+            <Card className={`${cardStyles.padding} ${cardStyles.base} shadow-card`}>
+              <h2 className={`${typography.cardTitle} mb-4`}>Filter Health</h2>
               <FilterHealth
                 preFilter={85}
                 hepa={72}
@@ -154,16 +146,16 @@ const Dashboard = () => {
 
           {/* Pollutant Chart - Full width */}
           <motion.div variants={cardVariants} className="lg:col-span-2">
-            <Card className="p-6 bg-card">
-              <h2 className="text-xl font-semibold mb-6">Pollutant Composition</h2>
+            <Card className={`${cardStyles.padding} ${cardStyles.base} shadow-card`}>
+              <h2 className={`${typography.cardTitle} mb-6`}>Pollutant Composition</h2>
               <PollutantChart />
             </Card>
           </motion.div>
 
           {/* Byproduct Stats */}
           <motion.div variants={cardVariants}>
-            <Card className="p-6 bg-card">
-              <h2 className="text-xl font-semibold mb-4">Byproduct Conversion</h2>
+            <Card className={`${cardStyles.padding} ${cardStyles.base} shadow-card`}>
+              <h2 className={`${typography.cardTitle} mb-4`}>Byproduct Conversion</h2>
               <ByproductStats />
             </Card>
           </motion.div>

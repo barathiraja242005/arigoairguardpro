@@ -9,13 +9,13 @@ interface FilterHealthProps {
 
 const FilterHealth = ({ preFilter, hepa, carbon }: FilterHealthProps) => {
   const filters = [
-    { name: "Pre-Filter", value: preFilter, icon: Filter, color: "bg-primary" },
-    { name: "HEPA", value: hepa, icon: Shield, color: "bg-secondary" },
-    { name: "Activated Carbon", value: carbon, icon: Droplets, color: "bg-accent" },
+    { name: "Pre-Filter", value: preFilter, icon: Filter, color: "bg-primary", trackColor: "bg-border" },
+    { name: "HEPA", value: hepa, icon: Shield, color: "bg-secondary", trackColor: "bg-border" },
+    { name: "Activated Carbon", value: carbon, icon: Droplets, color: "bg-accent", trackColor: "bg-border" },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {filters.map((filter, index) => (
         <motion.div
           key={filter.name}
@@ -31,7 +31,7 @@ const FilterHealth = ({ preFilter, hepa, carbon }: FilterHealthProps) => {
             </div>
             <span className="text-sm font-semibold">{filter.value}%</span>
           </div>
-          <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+          <div className={`relative h-2.5 rounded-full overflow-hidden ${filter.trackColor}`}>
             <motion.div
               className={`absolute inset-y-0 left-0 ${filter.color} rounded-full`}
               initial={{ width: 0 }}
