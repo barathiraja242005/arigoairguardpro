@@ -110,6 +110,7 @@ export const pollutionHotspots: PollutionPoint[] = [
 
   // ── Himachal Pradesh ──
   { id: "HP-01", lat: 31.1048, lng: 77.1734, aqi: 48, pollutant: "PM2.5", severity: "Good", label: "Shimla Mall Road", state: "Himachal Pradesh", street: "The Mall, Shimla", description: "Vehicle-free zone; low emissions." },
+  { id: "HP-02", lat: 32.2432, lng: 77.1892, aqi: 58, pollutant: "PM10", severity: "Moderate", label: "Manali Mall Road", state: "Himachal Pradesh", street: "The Mall Road, Manali", description: "Tourist season congestion; diesel taxis and wood heating." },
 
   // ── Goa ──
   { id: "GA-01", lat: 15.4909, lng: 73.8278, aqi: 52, pollutant: "PM10", severity: "Moderate", label: "Panaji Church Square", state: "Goa", street: "Church Square, Panaji", description: "Tourist season traffic impact." },
@@ -117,24 +118,60 @@ export const pollutionHotspots: PollutionPoint[] = [
 
   // ── Tripura ──
   { id: "TR-01", lat: 23.8315, lng: 91.2868, aqi: 58, pollutant: "PM10", severity: "Moderate", label: "Agartala Palace Road", state: "Tripura", street: "Ujjayanta Palace Road", description: "Vehicular emissions; brick kiln influence." },
+  { id: "TR-02", lat: 23.5330, lng: 91.4916, aqi: 72, pollutant: "PM2.5", severity: "Moderate", label: "Udaipur Brick Kiln Belt", state: "Tripura", street: "Udaipur–Amarpur Road", description: "Seasonal brick kiln activity and biomass burning." },
 
   // ── Sikkim ──
   { id: "SK-01", lat: 27.3389, lng: 88.6065, aqi: 30, pollutant: "PM2.5", severity: "Good", label: "Gangtok MG Marg", state: "Sikkim", street: "MG Marg, Gangtok", description: "Clean mountain air; minimal emissions." },
+  { id: "SK-02", lat: 27.1765, lng: 88.5346, aqi: 52, pollutant: "PM10", severity: "Moderate", label: "Rangpo Checkpost", state: "Sikkim", street: "NH-10, Rangpo", description: "Highway dust and freight movement at state entry point." },
 
   // ── Manipur ──
   { id: "MN-01", lat: 24.8170, lng: 93.9368, aqi: 42, pollutant: "PM2.5", severity: "Good", label: "Imphal Kangla Fort", state: "Manipur", street: "Kangla Fort Road", description: "Low traffic; seasonal biomass burning." },
+  { id: "MN-02", lat: 24.7981, lng: 93.9512, aqi: 56, pollutant: "PM10", severity: "Moderate", label: "North AOC Junction", state: "Manipur", street: "Airport Road, Imphal", description: "Junction congestion; dust resuspension on dry days." },
 
   // ── Meghalaya ──
   { id: "ML-01", lat: 25.5788, lng: 91.8933, aqi: 38, pollutant: "PM10", severity: "Good", label: "Shillong Police Bazaar", state: "Meghalaya", street: "Police Bazaar Road", description: "Light traffic; coal mining in outskirts." },
+  { id: "ML-02", lat: 26.0007, lng: 91.9799, aqi: 125, pollutant: "PM2.5", severity: "Unhealthy", label: "Byrnihat Industrial Belt", state: "Meghalaya", street: "Byrnihat–Jorabat Road", description: "Industrial cluster and freight corridor; sustained particulate load." },
 
   // ── Mizoram ──
   { id: "MZ-01", lat: 23.7271, lng: 92.7176, aqi: 32, pollutant: "PM2.5", severity: "Good", label: "Aizawl Solomon's Temple", state: "Mizoram", street: "Zarkawt Road", description: "Pristine air quality; minimal industry." },
+  { id: "MZ-02", lat: 22.8921, lng: 92.7426, aqi: 55, pollutant: "PM10", severity: "Moderate", label: "Lunglei Market Area", state: "Mizoram", street: "Bazar Veng, Lunglei", description: "Market traffic; roadside dust during dry spells." },
 
   // ── Nagaland ──
   { id: "NL-01", lat: 25.6747, lng: 94.1086, aqi: 36, pollutant: "PM2.5", severity: "Good", label: "Kohima War Cemetery", state: "Nagaland", street: "NH-29, Kohima", description: "Clean air; low vehicular traffic." },
+  { id: "NL-02", lat: 25.9050, lng: 93.7287, aqi: 72, pollutant: "NO2", severity: "Moderate", label: "Dimapur Railway Colony", state: "Nagaland", street: "Railway Station Road, Dimapur", description: "Transit hub emissions; idling vehicles and rail activity." },
 
   // ── Arunachal Pradesh ──
   { id: "AR-01", lat: 27.0844, lng: 93.6053, aqi: 28, pollutant: "PM2.5", severity: "Good", label: "Itanagar Ganga Lake", state: "Arunachal Pradesh", street: "Ganga Lake Road", description: "Minimal anthropogenic emissions." },
+  { id: "AR-02", lat: 28.0661, lng: 95.3265, aqi: 52, pollutant: "PM10", severity: "Moderate", label: "Pasighat Market", state: "Arunachal Pradesh", street: "Pasighat Main Market Road", description: "Local traffic and construction dust near the market core." },
+
+  // ── Jammu and Kashmir ──
+  { id: "JK-01", lat: 34.0837, lng: 74.7973, aqi: 78, pollutant: "PM2.5", severity: "Moderate", label: "Srinagar Lal Chowk", state: "Jammu and Kashmir", street: "Lal Chowk, Srinagar", description: "Traffic bottleneck; winter inversion traps particulates." },
+  { id: "JK-02", lat: 32.7266, lng: 74.8570, aqi: 110, pollutant: "NO2", severity: "Unhealthy", label: "Jammu Bus Stand Zone", state: "Jammu and Kashmir", street: "General Bus Stand, Jammu", description: "Diesel buses and congestion elevate NO₂ and PM." },
+  { id: "JK-03", lat: 33.8739, lng: 74.8999, aqi: 135, pollutant: "PM10", severity: "Unhealthy", label: "Pulwama Brick Kilns", state: "Jammu and Kashmir", street: "Pulwama Brick Kiln Cluster", description: "Kiln emissions and road dust from heavy trucks." },
+
+  // ── Ladakh ──
+  { id: "LA-01", lat: 34.1526, lng: 77.5770, aqi: 35, pollutant: "PM2.5", severity: "Good", label: "Leh Main Bazaar", state: "Ladakh", street: "Main Market Road, Leh", description: "Generally clean air; occasional dust from traffic." },
+  { id: "LA-02", lat: 34.5553, lng: 76.1256, aqi: 52, pollutant: "PM10", severity: "Moderate", label: "Kargil Highway Junction", state: "Ladakh", street: "NH-1D, Kargil", description: "Highway dust; diesel freight traffic in summer." },
+
+  // ── Chandigarh ──
+  { id: "CH-01", lat: 30.7333, lng: 76.7794, aqi: 110, pollutant: "PM2.5", severity: "Unhealthy", label: "Sector 17 Plaza", state: "Chandigarh", street: "Sector 17, Chandigarh", description: "Commercial traffic and idling vehicles near plaza." },
+  { id: "CH-02", lat: 30.7055, lng: 76.8010, aqi: 145, pollutant: "PM10", severity: "Unhealthy", label: "Industrial Area Phase II", state: "Chandigarh", street: "Industrial Area Phase II", description: "Industrial and freight movement; coarse particulates elevated." },
+
+  // ── Puducherry ──
+  { id: "PY-01", lat: 11.9341, lng: 79.8300, aqi: 62, pollutant: "PM10", severity: "Moderate", label: "White Town Promenade", state: "Puducherry", street: "Beach Road, Puducherry", description: "Tourist traffic and coastal road congestion." },
+  { id: "PY-02", lat: 11.9131, lng: 79.7980, aqi: 95, pollutant: "PM2.5", severity: "Moderate", label: "Ariankuppam Industrial", state: "Puducherry", street: "Ariankuppam Industrial Zone", description: "Small industrial units and freight traffic." },
+
+  // ── Andaman and Nicobar Islands ──
+  { id: "AN-01", lat: 11.6667, lng: 92.7460, aqi: 48, pollutant: "PM2.5", severity: "Good", label: "Port Blair Aberdeen Bazaar", state: "Andaman and Nicobar Islands", street: "Aberdeen Bazaar Road", description: "Localized traffic; generally clean maritime air." },
+  { id: "AN-02", lat: 11.6821, lng: 92.7411, aqi: 62, pollutant: "PM10", severity: "Moderate", label: "Port Blair Harbour Zone", state: "Andaman and Nicobar Islands", street: "Phoenix Bay Jetty Road", description: "Port activity and diesel boats raise coarse particulates." },
+
+  // ── Lakshadweep ──
+  { id: "LD-01", lat: 10.5667, lng: 72.6420, aqi: 28, pollutant: "PM2.5", severity: "Good", label: "Kavaratti Jetty", state: "Lakshadweep", street: "Jetty Road, Kavaratti", description: "Very clean air; minimal traffic." },
+  { id: "LD-02", lat: 10.8298, lng: 72.1766, aqi: 35, pollutant: "PM10", severity: "Good", label: "Agatti Airport Road", state: "Lakshadweep", street: "Airport Approach Road, Agatti", description: "Occasional dust from vehicles; overall low emissions." },
+
+  // ── Dadra and Nagar Haveli and Daman and Diu ──
+  { id: "DN-01", lat: 20.2763, lng: 73.0083, aqi: 155, pollutant: "PM2.5", severity: "Unhealthy", label: "Silvassa Industrial Estate", state: "Dadra and Nagar Haveli and Daman and Diu", street: "Silvassa Industrial Area", description: "Manufacturing cluster and truck movement; particulate hotspot." },
+  { id: "DN-02", lat: 20.3974, lng: 72.8328, aqi: 92, pollutant: "NO2", severity: "Moderate", label: "Daman Coastal Highway", state: "Dadra and Nagar Haveli and Daman and Diu", street: "NH-48 Connector, Daman", description: "Tourism season traffic; diesel exhaust along highway." },
 
   // ── Additional high-density entries ──
   { id: "DL-06", lat: 28.6508, lng: 77.2319, aqi: 245, pollutant: "SO2", severity: "Unhealthy", label: "Old Delhi Chandni Chowk", state: "Delhi", street: "Chandni Chowk Main Road", description: "Street food stalls and old industry emissions." },

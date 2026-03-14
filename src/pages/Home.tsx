@@ -57,7 +57,7 @@ const Home = () => {
 
   // Dummy credentials
   const DUMMY_CREDENTIALS = {
-    deviceId: "ARIGO2024",
+    deviceId: "ARIGO_001",
     password: "airguard123"
   };
 
@@ -237,7 +237,7 @@ const Home = () => {
                     </div>
                     <div className={formStyles.demoCredentials}>
                       <strong>Demo Credentials:</strong><br />
-                      Device ID: ARIGO2024<br />
+                      Device ID: ARIGO_001<br />
                       Password: airguard123
                     </div>
                     <Button 

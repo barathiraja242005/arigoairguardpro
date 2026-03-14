@@ -1,0 +1,26 @@
+{
+  "name": "arigo-airguardpro-functions",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -p tsconfig.json --watch",
+    "call:test": "node scripts/twilio-call-test.mjs",
+    "serve": "npm run build && cd .. && npx -y firebase-tools emulators:start --only functions,database",
+    "deploy": "npm run build && cd .. && npx -y firebase-tools deploy --only functions",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "firebase-admin": "^12.7.0",
+    "firebase-functions": "^6.4.0",
+    "twilio": "^4.20.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

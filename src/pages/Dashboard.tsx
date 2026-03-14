@@ -3,11 +3,12 @@ import { Card } from "@/components/ui/card";
 import AQIGauge from "@/components/dashboard/AQIGauge";
 import FilterHealth from "@/components/dashboard/FilterHealth";
 import FluctuatingBatteryStatus from "@/components/dashboard/FluctuatingBatteryStatus";
-import PollutantChart from "@/components/dashboard/PollutantChart";
 import FluctuatingPollutantLevels from "@/components/dashboard/FluctuatingPollutantLevels";
 import ByproductStats from "@/components/dashboard/ByproductStats";
-import { Wind, Droplets, Leaf, Zap, Sun, Moon } from "lucide-react";
+import DeviceTrendsChart from "@/components/dashboard/DeviceTrendsChart";
+import { MapPin, ShieldCheck, Thermometer, Droplets, Wind, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useAirguardDeviceAnalytics } from "@/hooks/useAirguardDeviceAnalytics";
 import {
   pageStyles,
   pageHeader,
@@ -22,6 +23,10 @@ import {
 const Dashboard = () => {
   const [darkMode, setDarkMode] = useState(false);
 
+  const deviceId = localStorage.getItem("deviceId") || "AIRGUARD_001";
+  const { loading, error, latestMetrics, status, location, todayHistory, todayKey } =
+    useAirguardDeviceAnalytics(deviceId);
+
   useEffect(() => {
     const savedMode = localStorage.getItem("darkMode");
     const isDarkMode = savedMode === "true";
@@ -35,11 +40,37 @@ const Dashboard = () => {
   }, []);
 
   const stats = [
-    { icon: Wind, label: "Air Flow", value: "250 m³/h", color: "text-primary" },
-    { icon: Droplets, label: "Humidity", value: "45%", color: "text-secondary" },
-    { icon: Leaf, label: "Efficiency", value: "99.7%", color: "text-earth-olive" },
-    { icon: Zap, label: "Power", value: "12W", color: "text-warning" },
+    {
+      icon: ShieldCheck,
+      label: "Device",
+      value: deviceId,
+      color: "text-primary",
+    },
+    {
+      icon: Thermometer,
+      label: "Temperature",
+      value: latestMetrics.temperature !== undefined ? `${latestMetrics.temperature.toFixed(1)}°C` : "—",
+      color: "text-secondary",
+    },
+    {
+      icon: Droplets,
+      label: "Humidity",
+      value: latestMetrics.humidity !== undefined ? `${latestMetrics.humidity.toFixed(0)}%` : "—",
+      color: "text-earth-olive",
+    },
+    {
+      icon: Wind,
+      label: "Status",
+      value: status?.online === false ? "Offline" : "Online",
+      color: status?.online === false ? "text-destructive" : "text-success",
+    },
   ];
+
+  const trendData = todayHistory.map((p) => ({
+    time: p.timeKey,
+    aqi: p.aqi,
+    dustDensity: p.dustDensity,
+  }));
 
   return (
     <div className={pageStyles.wrapper}>
@@ -74,8 +105,26 @@ const Dashboard = () => {
         >
           <h1 className={pageHeader.title}>Dashboard</h1>
           <p className={pageHeader.description}>
-            Real-time air quality monitoring and device status
+            Your personal pollution trends from Firebase
           </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-primary" />
+              <span>Device: {deviceId}</span>
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-secondary" />
+              <span>
+                Location: {location?.lat !== undefined && location?.lng !== undefined ? `${location.lat}, ${location.lng}` : "—"}
+              </span>
+            </span>
+            <span>
+              Last update: {latestMetrics.recordedAt ? new Date(latestMetrics.recordedAt).toLocaleString() : "—"}
+            </span>
+          </div>
+          {error ? (
+            <div className="mt-3 text-sm text-destructive">{error}</div>
+          ) : null}
         </motion.div>
 
         {/* Quick Stats */}
@@ -110,7 +159,14 @@ const Dashboard = () => {
           className="mb-8"
         >
           <h2 className={typography.sectionTitle}>Pollutant Levels</h2>
-          <FluctuatingPollutantLevels />
+          <FluctuatingPollutantLevels
+            values={{
+              aqi: latestMetrics.aqi,
+              dustDensity: latestMetrics.dustDensity,
+              coPpm: latestMetrics.coPpm,
+              no2Ppm: latestMetrics.no2Ppm,
+            }}
+          />
         </motion.div>
 
         {/* Main Grid */}
@@ -124,7 +180,10 @@ const Dashboard = () => {
           <motion.div variants={cardVariants} className="lg:col-span-2">
             <Card className={`${cardStyles.padding} h-full ${cardStyles.base} shadow-card`}>
               <h2 className={`${typography.cardTitle} mb-6 bg-gradient-hero bg-clip-text text-transparent`}>Air Quality Index</h2>
-              <AQIGauge value={65} />
+              <AQIGauge value={latestMetrics.aqi ?? 0} />
+              {loading && !latestMetrics.recordedAt ? (
+                <div className="mt-4 text-sm text-muted-foreground">Waiting for device data…</div>
+              ) : null}
             </Card>
           </motion.div>
 
@@ -144,11 +203,14 @@ const Dashboard = () => {
             </Card>
           </motion.div>
 
-          {/* Pollutant Chart - Full width */}
+          {/* Trends - Full width */}
           <motion.div variants={cardVariants} className="lg:col-span-2">
             <Card className={`${cardStyles.padding} ${cardStyles.base} shadow-card`}>
-              <h2 className={`${typography.cardTitle} mb-6`}>Pollutant Composition</h2>
-              <PollutantChart />
+              <h2 className={`${typography.cardTitle} mb-1`}>Today’s Pollution Trends</h2>
+              <p className="text-sm text-muted-foreground mb-6">
+                Trend for {todayKey} (AQI and PM2.5 from your device history)
+              </p>
+              <DeviceTrendsChart data={trendData} />
             </Card>
           </motion.div>
 

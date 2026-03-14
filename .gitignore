@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Local env/secrets (do not commit)
+functions/.env
+twilio_2FA_recovery_code*.txt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

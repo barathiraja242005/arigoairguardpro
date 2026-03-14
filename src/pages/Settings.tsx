@@ -29,12 +29,13 @@ const Settings = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPairing, setIsPairing] = useState(false);
+  const [isTestingAlertCall, setIsTestingAlertCall] = useState(false);
   const [pairDialogOpen, setPairDialogOpen] = useState(false);
   const [deviceCode, setDeviceCode] = useState("");
   const [pairedDevices, setPairedDevices] = useState<Array<{id: string, name: string, date: string, status: string}>>([]);
   const isFirstRender = useRef(true);
 
-  const userId = localStorage.getItem("deviceId") || "ARIGO2024";
+  const userId = localStorage.getItem("deviceId") || "ARIGO_001";
 
   // Load settings from Firebase on mount (fallback to localStorage)
   useEffect(() => {
@@ -310,6 +311,53 @@ const Settings = () => {
     navigate("/");
   };
 
+  const handleTestAlertCall = async () => {
+    setIsTestingAlertCall(true);
+    const deviceId =
+      localStorage.getItem("deviceId") ||
+      pairedDevices[0]?.id ||
+      "AIRGUARD_001";
+
+    const latestRef = ref(database, `airguard_devices/${deviceId}/latest_reading`);
+    const metaRef = ref(database, `airguard_devices/${deviceId}/alerts/aqi_over_50`);
+    const nowIso = () => new Date().toISOString();
+    const testId =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+    try {
+      // Force an upward crossing (<= 50 → > 50) to trigger the function.
+      await set(latestRef, { "After aqi": 45, recorded_at: nowIso(), __test_alert: true, __test_id: testId });
+      await new Promise((r) => setTimeout(r, 500));
+      await set(latestRef, { "After aqi": 55, recorded_at: nowIso(), __test_alert: true, __test_id: testId });
+
+      // Poll for confirmation from the cloud function (it will write last_test_id + last_call_sid)
+      const deadlineMs = Date.now() + 25_000;
+      let lastSeenSid: string | undefined;
+      while (Date.now() < deadlineMs) {
+        const snap = await get(metaRef);
+        const meta = snap.exists() ? (snap.val() as any) : null;
+        if (meta && typeof meta.last_test_id === "string" && meta.last_test_id === testId) {
+          if (typeof meta.last_call_sid === "string") lastSeenSid = meta.last_call_sid;
+          break;
+        }
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+
+      toast.success("Test alert triggered", {
+        description: lastSeenSid
+          ? `Triggered for ${deviceId}. Call SID: ${lastSeenSid}`
+          : `Wrote AQI 45→55 for ${deviceId}. If you don't receive a call, check Function logs (it may be blocked by cooldown or Twilio).`,
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      toast.error("Failed to trigger test alert", { description: message });
+    } finally {
+      setIsTestingAlertCall(false);
+    }
+  };
+
   return (
     <div className={`${pageStyles.gradientWrapper} ${responsive.pagePadding}`}>
       {/* Dark Mode Toggle */}
@@ -469,6 +517,27 @@ const Settings = () => {
                 <p className="text-sm text-muted-foreground">
                   Notification preferences are saved to the cloud and synced across your devices. Push notifications require browser permission.
                 </p>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 p-4 rounded-lg border border-border/50 hover:bg-background/50 transition-colors">
+                <div>
+                  <p className="font-medium text-foreground">Alert Test Call</p>
+                  <p className="text-sm text-muted-foreground">
+                    Triggers an AQI 45→55 write to call your configured number.
+                  </p>
+                </div>
+                <Button
+                  onClick={handleTestAlertCall}
+                  disabled={isTestingAlertCall}
+                  variant="outline"
+                  className="shrink-0"
+                >
+                  {isTestingAlertCall ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Testing…</>
+                  ) : (
+                    "Test Call"
+                  )}
+                </Button>
               </div>
             </CardContent>
           </Card>

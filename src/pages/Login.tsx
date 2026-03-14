@@ -27,7 +27,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 // Dummy credentials
 const DUMMY_CREDENTIALS = {
-  deviceId: "ARIGO2024",
+  deviceId: "ARIGO_001",
   password: "airguard123"
 };
 
@@ -49,6 +49,10 @@ export default function Login() {
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      deviceId: DUMMY_CREDENTIALS.deviceId,
+      password: "",
+    },
   });
 
   const onSubmit = async (data: LoginFormData) => {
@@ -74,7 +78,7 @@ export default function Login() {
     } catch (error) {
       toast({
         title: "Connection Failed",
-        description: "Invalid device ID or password. Try: ARIGO2024 / airguard123",
+        description: "Invalid device ID or password. Try: ARIGO_001 / airguard123",
         variant: "destructive",
       });
     } finally {
@@ -137,7 +141,7 @@ export default function Login() {
 
               <div className="text-xs text-muted-foreground bg-primary/5 border border-primary/10 p-3 rounded-lg">
                 <strong className="text-primary">Demo Credentials:</strong><br />
-                Device ID: ARIGO2024<br />
+                Device ID: ARIGO_001<br />
                 Password: airguard123
               </div>
 

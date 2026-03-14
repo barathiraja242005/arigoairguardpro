@@ -1,42 +1,54 @@
 import { Card } from "@/components/ui/card";
 import { useFluctuatingValue } from "@/hooks/useFluctuatingValue";
 
-const FluctuatingPollutantLevels = () => {
-  const pm25 = useFluctuatingValue(28, 3);
-  const pm10 = useFluctuatingValue(42, 4);
-  const co2 = useFluctuatingValue(450, 20);
-  const voc = useFluctuatingValue(85, 10);
+type LiveValues = {
+  aqi?: number;
+  dustDensity?: number;
+  coPpm?: number;
+  no2Ppm?: number;
+};
+
+const FluctuatingPollutantLevels = (props: { values?: LiveValues }) => {
+  const fallbackAqi = useFluctuatingValue(65, 5);
+  const fallbackDust = useFluctuatingValue(28, 3);
+  const fallbackCo = useFluctuatingValue(2.5, 0.3);
+  const fallbackNo2 = useFluctuatingValue(15, 2);
+
+  const aqi = props.values?.aqi ?? fallbackAqi;
+  const dustDensity = props.values?.dustDensity ?? fallbackDust;
+  const coPpm = props.values?.coPpm ?? fallbackCo;
+  const no2Ppm = props.values?.no2Ppm ?? fallbackNo2;
 
   const pollutants = [
     {
-      name: "PM2.5",
-      value: pm25,
-      unit: "µg/m³",
-      max: 50,
+      name: "AQI",
+      value: aqi,
+      unit: "",
+      max: 200,
       color: "bg-primary",
       trackColor: "bg-border",
     },
     {
-      name: "PM10",
-      value: pm10,
+      name: "PM2.5 (Dust)",
+      value: dustDensity,
       unit: "µg/m³",
-      max: 100,
+      max: 200,
       color: "bg-secondary",
       trackColor: "bg-border",
     },
     {
-      name: "CO₂",
-      value: co2,
+      name: "CO",
+      value: coPpm,
       unit: "ppm",
-      max: 1000,
+      max: 9,
       color: "bg-accent",
       trackColor: "bg-border",
     },
     {
-      name: "VOC",
-      value: voc,
-      unit: "ppb",
-      max: 200,
+      name: "NO₂",
+      value: no2Ppm,
+      unit: "ppm",
+      max: 100,
       color: "bg-warning",
       trackColor: "bg-border",
     },
