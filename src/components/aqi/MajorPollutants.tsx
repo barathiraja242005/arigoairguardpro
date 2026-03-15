@@ -11,8 +11,8 @@ interface Pollutant {
 }
 
 const pollutants: Pollutant[] = [
-  { name: "Particulate Matter", shortName: "PM2.5", value: 52, unit: "µg/m³", icon: Wind, color: "text-primary" },
-  { name: "Particulate Matter", shortName: "PM10", value: 56, unit: "µg/m³", icon: Wind, color: "text-destructive" },
+  { name: "Particulate Matter", shortName: "PM2.5", value: 12, unit: "µg/m³", icon: Wind, color: "text-primary" },
+  { name: "Particulate Matter", shortName: "PM10", value: 16, unit: "µg/m³", icon: Wind, color: "text-destructive" },
   { name: "Carbon Monoxide", shortName: "CO", value: 1000, unit: "ppb", icon: Factory, color: "text-muted-foreground" },
   { name: "Sulfur Dioxide", shortName: "SO2", value: 5, unit: "ppb", icon: Flame, color: "text-warning" },
   { name: "Nitrogen Dioxide", shortName: "NO2", value: 20, unit: "ppb", icon: Droplet, color: "text-secondary" },
