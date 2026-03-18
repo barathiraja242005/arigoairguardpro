@@ -3,7 +3,7 @@
  * Pollutant filter pills, severity toggle, live stats, download button.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Wind,
@@ -54,7 +54,23 @@ const MapSidebar = ({
   title = "Pollution Hotspots",
   subtitle = "Air Quality Monitoring",
 }: MapSidebarProps) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth < 768;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const media = window.matchMedia("(max-width: 767px)");
+    const onChange = () => {
+      if (media.matches) setCollapsed(true);
+    };
+
+    onChange();
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
 
   /* Compute stats */
   const totalHotspots = data.length;

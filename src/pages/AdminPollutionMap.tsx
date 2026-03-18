@@ -100,7 +100,7 @@ const AdminPollutionMap = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden">
+    <div className="flex h-[100dvh] w-screen overflow-hidden">
       {/* ── Sidebar ── */}
       <MapSidebar
         data={hotspotData}

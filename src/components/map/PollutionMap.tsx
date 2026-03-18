@@ -284,7 +284,9 @@ const PollutionMap = ({
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    const map = L.map(containerRef.current, {
+    const containerEl = containerRef.current;
+
+    const map = L.map(containerEl, {
       zoomControl: false,
       maxBounds: indiaBounds,
       maxBoundsViscosity: 1.0,
@@ -292,6 +294,21 @@ const PollutionMap = ({
       maxZoom: 14,
       boxZoom: false,
     }).setView([22.5, 79], 5);
+
+    const invalidateSize = () => {
+      map.invalidateSize({ pan: false });
+    };
+
+    // Keep the map responsive when its container or viewport changes (mobile address bar,
+    // rotation, sidebar collapsing/expanding, etc.).
+    const ro = typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(() => requestAnimationFrame(invalidateSize))
+      : null;
+    ro?.observe(containerEl);
+
+    const onViewportChange = () => requestAnimationFrame(invalidateSize);
+    window.addEventListener("orientationchange", onViewportChange);
+    window.visualViewport?.addEventListener("resize", onViewportChange);
 
     L.control.zoom({ position: "bottomright" }).addTo(map);
 
@@ -319,7 +336,14 @@ const PollutionMap = ({
     markersRef.current = L.layerGroup().addTo(map);
     mapRef.current = map;
 
+    // One more invalidate after initial paint to avoid blank tiles on first load.
+    requestAnimationFrame(invalidateSize);
+
     return () => {
+      ro?.disconnect();
+      window.removeEventListener("orientationchange", onViewportChange);
+      window.visualViewport?.removeEventListener("resize", onViewportChange);
+
       if (legendRef.current) {
         map.removeControl(legendRef.current);
         legendRef.current = null;
