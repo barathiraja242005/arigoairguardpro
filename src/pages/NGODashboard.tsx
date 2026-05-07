@@ -31,38 +31,27 @@ import AIChatbot from "@/components/chat/AIChatbot";
 import { getStateByName, type StatePollutionData } from "@/lib/statePollutionData";
 import { getHotspotsForState, pollutionHotspots } from "@/data/pollutionHotspots";
 import { getNearbyNGOs } from "@/data/ngoData";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 /* ─── Component ─── */
 
 const NGODashboard = () => {
   const navigate = useNavigate();
+  const { session, setNgoPremium, signOut } = useAuth();
+  const ngoName = session?.role === "ngo" ? session.ngoName : "";
+  const stateName = session?.role === "ngo" ? session.state : "";
+  const isPremium = session?.role === "ngo" ? session.premium : false;
 
-  const [ngoName, setNgoName] = useState("");
-  const [stateName, setStateName] = useState("");
   const [stateData, setStateData] = useState<StatePollutionData | undefined>();
   const [selectedPollutant, setSelectedPollutant] = useState<string | null>(null);
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<PollutionPoint | null>(null);
-  const [isPremium, setIsPremium] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
 
-  /* Auth check */
   useEffect(() => {
-    const auth = localStorage.getItem("ngoAuthenticated");
-    const name = localStorage.getItem("ngoName");
-    const state = localStorage.getItem("ngoState");
-    if (!auth || !name || !state) {
-      navigate("/ngo-login");
-      return;
-    }
-    setNgoName(name);
-    setStateName(state);
-    setStateData(getStateByName(state));
-
-    const premium = localStorage.getItem("ngoPremium") === "true";
-    setIsPremium(premium);
-  }, [navigate]);
+    if (stateName) setStateData(getStateByName(stateName));
+  }, [stateName]);
 
   /* Hotspot data — only user's state unless premium */
   const hotspotData: PollutionPoint[] = useMemo(() => {
@@ -98,20 +87,16 @@ const NGODashboard = () => {
   };
 
   const handleUpgradePremium = () => {
-    localStorage.setItem("ngoPremium", "true");
-    setIsPremium(true);
+    setNgoPremium(true);
     setShowPremiumModal(false);
-    toast.success("🎉 Premium Activated!", {
+    toast.success("Premium Activated!", {
       description: "You now have access to all 29 states. Enjoy nationwide pollution data!",
       duration: 5000,
     });
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("ngoAuthenticated");
-    localStorage.removeItem("ngoName");
-    localStorage.removeItem("ngoState");
-    localStorage.removeItem("ngoPremium");
+    signOut();
     navigate("/map");
   };
 
@@ -145,11 +130,11 @@ const NGODashboard = () => {
         <motion.div
           initial={{ y: -40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="absolute top-4 right-4 z-[1000] flex items-center gap-2"
+          className="absolute top-4 right-4 z-[1000] flex flex-wrap items-center gap-2 max-w-[calc(100%-2rem)] justify-end"
         >
           {/* State AQI Quick Stats */}
           {stateStats && (
-            <div className="hidden md:flex items-center gap-1.5 bg-card/90 backdrop-blur-md rounded-lg px-3 py-2 shadow-lg border border-border">
+            <div className="flex items-center gap-1.5 bg-card/90 backdrop-blur-md rounded-lg px-3 py-2 shadow-lg border border-border">
               <BarChart3 className="w-3.5 h-3.5 text-primary" />
               <span className="text-[10px] font-bold text-foreground">AQI {stateData.aqi}</span>
               <span className="w-px h-4 bg-border mx-1" />
@@ -164,19 +149,19 @@ const NGODashboard = () => {
 
           {/* Premium Badge / Upgrade Button */}
           {isPremium ? (
-            <div className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md rounded-lg px-3 py-2 shadow-lg border border-amber-500/30">
-              <Crown className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-[10px] font-bold text-amber-300">PREMIUM</span>
+            <div className="flex items-center gap-1.5 bg-gradient-to-r bg-warning/15 backdrop-blur-md rounded-lg px-3 py-2 shadow-lg border border-warning/30">
+              <Crown className="w-3.5 h-3.5 text-warning" />
+              <span className="text-[10px] font-bold text-warning">PREMIUM</span>
             </div>
           ) : (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowPremiumModal(true)}
-              className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 backdrop-blur-md rounded-lg px-3 py-2 shadow-lg border border-amber-500/20 hover:border-amber-500/40 transition-colors"
+              className="flex items-center gap-1.5 bg-gradient-to-r bg-warning/8 backdrop-blur-md rounded-lg px-3 py-2 shadow-lg border border-warning/20 hover:border-warning/40 transition-colors"
             >
-              <Lock className="w-3 h-3 text-amber-400/70" />
-              <span className="text-[10px] font-semibold text-amber-300/80">Upgrade</span>
+              <Lock className="w-3 h-3 text-warning/70" />
+              <span className="text-[10px] font-semibold text-warning/80">Upgrade</span>
             </motion.button>
           )}
 
@@ -184,7 +169,7 @@ const NGODashboard = () => {
           <div className="flex items-center gap-2 bg-card/90 backdrop-blur-md rounded-lg px-3 py-2 shadow-lg border border-border">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, hsl(25,95%,53%), hsl(345,65%,47%))" }}
+              style={{ background: "linear-gradient(135deg, hsl(140,45%,38%), hsl(140,45%,38%))" }}
             >
               <Heart className="w-3.5 h-3.5 text-white" />
             </div>
@@ -240,7 +225,7 @@ const NGODashboard = () => {
                     <span
                       key={src}
                       className="text-[8px] font-semibold px-1.5 py-0.5 rounded-full"
-                      style={{ background: "hsl(25,95%,53%,0.12)", color: "hsl(25,95%,65%)" }}
+                      style={{ background: "hsl(140,45%,38%,0.12)", color: "hsl(140,55%,68%)" }}
                     >
                       {src}
                     </span>
@@ -315,7 +300,7 @@ const NGODashboard = () => {
               <div
                 className="relative px-6 pt-8 pb-6 text-center"
                 style={{
-                  background: "linear-gradient(135deg, hsl(40,90%,50%) 0%, hsl(25,95%,53%) 50%, hsl(345,65%,47%) 100%)",
+                  background: "linear-gradient(135deg, hsl(40,90%,50%) 0%, hsl(140,45%,38%) 50%, hsl(140,45%,38%) 100%)",
                 }}
               >
                 <button
@@ -355,9 +340,9 @@ const NGODashboard = () => {
                     >
                       <div
                         className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center"
-                        style={{ background: "hsl(25,95%,53%,0.15)" }}
+                        style={{ background: "hsl(140,45%,38%,0.15)" }}
                       >
-                        <Icon className="w-4 h-4" style={{ color: "hsl(25,95%,60%)" }} />
+                        <Icon className="w-4 h-4" style={{ color: "hsl(140,55%,58%)" }} />
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-white">{feature.title}</h4>
@@ -376,8 +361,8 @@ const NGODashboard = () => {
                   onClick={handleUpgradePremium}
                   className="w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all"
                   style={{
-                    background: "linear-gradient(135deg, hsl(40,90%,50%), hsl(25,95%,53%), hsl(345,65%,47%))",
-                    boxShadow: "0 4px 20px hsl(25,95%,53%,0.35)",
+                    background: "linear-gradient(135deg, hsl(40,90%,50%), hsl(140,45%,38%), hsl(140,45%,38%))",
+                    boxShadow: "0 4px 20px hsl(140,45%,38%,0.35)",
                   }}
                 >
                   <div className="flex items-center justify-center gap-2">
@@ -412,12 +397,12 @@ const NGODashboard = () => {
         }
         .state-label-tooltip {
           background: rgba(255,255,255,0.95) !important;
-          border: 2px solid hsl(25,95%,53%) !important;
+          border: 2px solid hsl(140,45%,38%) !important;
           border-radius: 10px !important;
           padding: 6px 14px !important;
           font-weight: 800 !important;
           font-size: 12px !important;
-          color: hsl(25,40%,20%) !important;
+          color: hsl(0,0%,9%) !important;
           box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
           letter-spacing: 0.3px !important;
         }

@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import AIChatbot from "@/components/chat/AIChatbot";
+import { useAuth } from "@/contexts/AuthContext";
 
 const GlobalAIChatbot = () => {
   const location = useLocation();
+  const { session } = useAuth();
 
   const config = useMemo(() => {
     const { pathname } = location;
@@ -12,39 +14,14 @@ const GlobalAIChatbot = () => {
       return null;
     }
 
+    const ngoState = session?.role === "ngo" ? session.state : "India";
+
     if (pathname === "/ngo-login") {
-      return {
-        stateName: localStorage.getItem("ngoState") || "India",
-        focusMode: "ngo-login" as const,
-      };
+      return { stateName: ngoState, focusMode: "ngo-login" as const };
     }
 
-    if (pathname === "/login") {
-      return {
-        stateName: "India",
-        focusMode: "general" as const,
-      };
-    }
-
-    if (pathname === "/admin-login") {
-      return {
-        stateName: "India",
-        focusMode: "general" as const,
-      };
-    }
-
-    if (pathname === "/map") {
-      return {
-        stateName: "India",
-        focusMode: "general" as const,
-      };
-    }
-
-    return {
-      stateName: localStorage.getItem("ngoState") || "India",
-      focusMode: "general" as const,
-    };
-  }, [location]);
+    return { stateName: ngoState, focusMode: "general" as const };
+  }, [location, session]);
 
   if (!config) {
     return null;

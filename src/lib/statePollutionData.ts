@@ -89,9 +89,9 @@ export function getAqiStatus(aqi: number): StatePollutionData["status"] {
 }
 
 export function getAqiColor(aqi: number): string {
-  if (aqi <= 50) return "hsl(152, 56%, 40%)";
+  if (aqi <= 50) return "hsl(140, 53%, 45%)";
   if (aqi <= 100) return "hsl(42, 90%, 50%)";
-  if (aqi <= 150) return "hsl(25, 95%, 53%)";
+  if (aqi <= 150) return "hsl(140, 45%, 38%)";
   if (aqi <= 200) return "hsl(12, 85%, 50%)";
   return "hsl(355, 75%, 50%)";
 }

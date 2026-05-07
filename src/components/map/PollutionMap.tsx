@@ -33,6 +33,12 @@ interface PollutionMapProps {
   onStateClick?: (stateName: string) => void;
   userState?: string;   // NGO user's registered state
   isPremium?: boolean;  // Premium = access all states
+  deviceLocation?: {
+    lat: number;
+    lng: number;
+    label?: string;
+    aqi?: number;
+  };
 }
 
 /* ─── Marker sizing by severity ─── */
@@ -94,10 +100,12 @@ const PollutionMap = ({
   onStateClick,
   userState,
   isPremium,
+  deviceLocation,
 }: PollutionMapProps) => {
   const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<L.LayerGroup | null>(null);
+  const deviceMarkerRef = useRef<L.Marker | null>(null);
   const stateLayerRef = useRef<L.GeoJSON | null>(null);
   const legendRef = useRef<L.Control | null>(null);
   const geoJsonDataRef = useRef<any>(null);
@@ -139,14 +147,14 @@ const PollutionMap = ({
             ? "hsl(142,76%,36%)"
             : isRestricted
             ? "hsl(0,0%,60%)"
-            : "hsl(25,95%,53%)",
+            : "hsl(140,45%,38%)",
           weight: isUserState ? 4 : 2.5,
           opacity: isRestricted ? 0.3 : isUserState ? 1 : 0.7,
           fillColor: isUserState
             ? "hsl(142,76%,50%)"
             : isRestricted
             ? "hsl(0,0%,60%)"
-            : "hsl(25,95%,53%)",
+            : "hsl(140,45%,38%)",
           fillOpacity: isUserState ? 0.35 : isRestricted ? 0.02 : 0.04,
           dashArray: isRestricted ? "5, 5" : "",
         };
@@ -185,8 +193,8 @@ const PollutionMap = ({
               hoveredLayer.setStyle({
                 fillOpacity: isUserState ? 0.5 : 0.25,
                 weight: isUserState ? 5 : 3.5,
-                color: isUserState ? "hsl(142,76%,30%)" : "hsl(25,95%,45%)",
-                fillColor: isUserState ? "hsl(142,76%,55%)" : "hsl(25,95%,55%)",
+                color: isUserState ? "hsl(142,76%,30%)" : "hsl(140,50%,35%)",
+                fillColor: isUserState ? "hsl(142,76%,55%)" : "hsl(140,50%,48%)",
               });
             }
             hoveredLayer.bringToFront();
@@ -205,8 +213,8 @@ const PollutionMap = ({
               hoveredLayer.setStyle({
                 fillOpacity: isUserState ? 0.35 : 0.04,
                 weight: isUserState ? 4 : 2.5,
-                color: isUserState ? "hsl(142,76%,36%)" : "hsl(25,95%,53%)",
-                fillColor: isUserState ? "hsl(142,76%,50%)" : "hsl(25,95%,53%)",
+                color: isUserState ? "hsl(142,76%,36%)" : "hsl(140,45%,38%)",
+                fillColor: isUserState ? "hsl(142,76%,50%)" : "hsl(140,45%,38%)",
               });
             }
             hoveredLayer.closeTooltip();
@@ -252,7 +260,7 @@ const PollutionMap = ({
                 <span style="margin-left:auto;font-size:10px;font-weight:700;color:hsl(142,76%,40%);background:hsl(142,76%,95%);padding:2px 6px;border-radius:4px;">HOME</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
-                <div style="width:14px;height:14px;border-radius:3px;background:hsl(25,95%,53%);border:2px solid hsl(25,95%,45%);"></div>
+                <div style="width:14px;height:14px;border-radius:3px;background:hsl(140,45%,38%);border:2px solid hsl(140,50%,35%);"></div>
                 <span style="font-size:12px;font-weight:600;color:#0f172a;">All States</span>
                 <span style="margin-left:auto;font-size:10px;font-weight:700;color:#0F2854;background:#BDE8F5;padding:2px 6px;border-radius:4px;">UNLOCKED</span>
               </div>
@@ -361,6 +369,65 @@ const PollutionMap = ({
     if (!geoJsonDataRef.current || !mapRef.current) return;
     renderStateAccess(geoJsonDataRef.current);
   }, [userState, isPremium, onStateClick]);
+
+  /* Place / update the user's own device marker + auto-center */
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    if (deviceMarkerRef.current) {
+      map.removeLayer(deviceMarkerRef.current);
+      deviceMarkerRef.current = null;
+    }
+
+    if (!deviceLocation) return;
+
+    const aqi = deviceLocation.aqi;
+    const color = aqi !== undefined ? getAqiColor(aqi) : "hsl(217,91%,60%)";
+
+    const html = `
+      <div style="position:relative;width:48px;height:48px;display:flex;align-items:center;justify-content:center">
+        <div style="position:absolute;width:48px;height:48px;border-radius:50%;background:${color};opacity:0.18;animation:marker-pulse 2s ease-out infinite"></div>
+        <div style="position:absolute;width:36px;height:36px;border-radius:50%;background:${color};opacity:0.25;animation:marker-pulse 2.4s ease-out infinite 0.4s"></div>
+        <div style="
+          width:26px;height:26px;border-radius:50%;
+          background:radial-gradient(circle at 35% 35%, ${color}ee, ${color});
+          border:3px solid #fff;
+          box-shadow:0 4px 12px ${color}66, 0 0 18px ${color}33;
+          display:flex;align-items:center;justify-content:center;
+          font-size:11px;font-weight:900;color:#fff;
+          z-index:2;position:relative;
+          letter-spacing:-0.5px;
+        ">${aqi !== undefined ? Math.round(aqi) : "•"}</div>
+      </div>
+    `;
+
+    const icon = L.divIcon({
+      className: "custom-pollution-marker device-marker",
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      popupAnchor: [0, -22],
+      html,
+    });
+
+    const marker = L.marker([deviceLocation.lat, deviceLocation.lng], { icon, zIndexOffset: 1000 });
+    marker.bindPopup(
+      `<div style="min-width:200px;font-family:system-ui,sans-serif;padding:2px">
+        <h3 style="font-weight:800;font-size:13px;margin:0 0 4px;color:#0f172a">${deviceLocation.label ?? "Your Device"}</h3>
+        <p style="font-size:11px;color:#64748b;margin:0 0 6px">${deviceLocation.lat.toFixed(4)}, ${deviceLocation.lng.toFixed(4)}</p>
+        ${
+          aqi !== undefined
+            ? `<div style="display:flex;align-items:center;gap:6px"><span style="font-size:18px;font-weight:900;color:#0f172a">${Math.round(aqi)}</span><span style="font-size:10px;color:#64748b;font-weight:600">CURRENT AQI</span></div>`
+            : ""
+        }
+      </div>`,
+      { className: "pollution-popup-custom", maxWidth: 240 },
+    );
+    marker.addTo(map);
+    deviceMarkerRef.current = marker;
+
+    map.setView([deviceLocation.lat, deviceLocation.lng], Math.max(map.getZoom(), 9), { animate: true });
+  }, [deviceLocation?.lat, deviceLocation?.lng, deviceLocation?.aqi, deviceLocation?.label]);
 
   /* Redraw markers when filter changes */
   useEffect(() => {

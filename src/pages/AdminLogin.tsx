@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import DemoBadge from '@/components/ui/DemoBadge';
+import { useAuth } from '@/contexts/AuthContext';
+import { authenticateAdmin, DEMO_ADMIN, DEMO_MODE_ENABLED } from '@/lib/demoAuth';
 import { pageStyles } from '@/lib/design-system';
 
 const AdminLogin = () => {
@@ -12,10 +15,18 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { session, signInAdmin } = useAuth();
+
+  useEffect(() => {
+    if (session?.role === 'admin') {
+      navigate('/admin-pollution-map', { replace: true });
+    }
+  }, [session, navigate]);
 
   const handleLogin = () => {
-    if (username === 'admin' && password === 'admin@123') {
-      navigate('/admin-pollution-map');
+    if (authenticateAdmin(username, password)) {
+      signInAdmin();
+      navigate('/admin-pollution-map', { replace: true });
     } else {
       setError('Invalid username or password');
     }
@@ -28,6 +39,9 @@ const AdminLogin = () => {
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">Admin Login</CardTitle>
             <CardDescription>Enter credentials to access the admin dashboard.</CardDescription>
+            <div className="flex justify-center pt-2">
+              <DemoBadge />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -48,11 +62,18 @@ const AdminLogin = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                  onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
                   placeholder="Enter password"
                 />
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
+              {DEMO_MODE_ENABLED && (
+                <div className="text-xs text-muted-foreground bg-primary/5 border border-primary/10 p-3 rounded-lg">
+                  <strong className="text-primary">Demo Credentials:</strong><br />
+                  Username: {DEMO_ADMIN.username}<br />
+                  Password: {DEMO_ADMIN.password}
+                </div>
+              )}
               <Button onClick={handleLogin} className="w-full">
                 Login
               </Button>

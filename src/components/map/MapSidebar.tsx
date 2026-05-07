@@ -30,9 +30,9 @@ interface MapSidebarProps {
 
 /* Pollutants we can filter on */
 const POLLUTANTS = [
-  { key: "PM2.5", icon: Wind, colour: "hsl(25,95%,53%)" },
-  { key: "PM10", icon: Wind, colour: "hsl(345,65%,47%)" },
-  { key: "CO2", icon: Flame, colour: "hsl(14,70%,52%)" },
+  { key: "PM2.5", icon: Wind, colour: "hsl(140,45%,38%)" },
+  { key: "PM10", icon: Wind, colour: "hsl(140,45%,38%)" },
+  { key: "CO2", icon: Flame, colour: "hsl(0,0%,40%)" },
   { key: "SO2", icon: AlertTriangle, colour: "hsl(40,80%,52%)" },
   { key: "NO2", icon: BarChart2, colour: "hsl(200,80%,50%)" },
   { key: "O3", icon: MapPin, colour: "hsl(280,60%,55%)" },
@@ -104,7 +104,7 @@ const MapSidebar = ({
       style={{
         background:
           "linear-gradient(180deg, hsl(20,25%,12%) 0%, hsl(20,18%,8%) 100%)",
-        borderColor: "hsl(25,30%,20%)",
+        borderColor: "hsl(0,0%,11%)",
       }}
     >
       {/* Toggle */}
@@ -112,8 +112,8 @@ const MapSidebar = ({
         onClick={() => setCollapsed(!collapsed)}
         className="absolute -right-3.5 top-7 z-[60] w-7 h-7 rounded-full flex items-center justify-center shadow-lg border"
         style={{
-          background: "hsl(25,95%,53%)",
-          borderColor: "hsl(25,95%,45%)",
+          background: "hsl(140,45%,38%)",
+          borderColor: "hsl(140,50%,35%)",
         }}
       >
         {collapsed ? (
@@ -136,7 +136,7 @@ const MapSidebar = ({
               className="px-5 pt-6 pb-4"
               style={{
                 background:
-                  "linear-gradient(135deg, hsl(25,95%,53%) 0%, hsl(345,65%,47%) 100%)",
+                  "linear-gradient(135deg, hsl(140,45%,38%) 0%, hsl(140,45%,38%) 100%)",
               }}
             >
               <div className="flex items-center gap-2 mb-1">
@@ -223,9 +223,9 @@ const MapSidebar = ({
             {/* Stats Grid */}
             <div className="px-4 py-4 grid grid-cols-3 gap-2">
               {[
-                { label: "Hotspots", value: totalHotspots, colour: "hsl(25,95%,53%)" },
+                { label: "Hotspots", value: totalHotspots, colour: "hsl(140,45%,38%)" },
                 { label: "Emergency", value: unhealthyCount, colour: "#ef4444" },
-                { label: "States", value: statesAffected, colour: "hsl(345,65%,47%)" },
+                { label: "States", value: statesAffected, colour: "hsl(140,45%,38%)" },
               ].map((stat) => (
                 <div
                   key={stat.label}
@@ -252,8 +252,8 @@ const MapSidebar = ({
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white transition-all duration-200"
                 style={{
                   background:
-                    "linear-gradient(135deg, hsl(25,95%,53%), hsl(345,65%,47%))",
-                  boxShadow: "0 4px 16px hsl(25,95%,53%,0.25)",
+                    "linear-gradient(135deg, hsl(140,45%,38%), hsl(140,45%,38%))",
+                  boxShadow: "0 4px 16px hsl(140,45%,38%,0.25)",
                 }}
               >
                 <Download className="w-3.5 h-3.5" />

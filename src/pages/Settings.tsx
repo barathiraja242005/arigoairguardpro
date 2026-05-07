@@ -6,36 +6,39 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { User, Bell, Smartphone, Moon, Sun, Palette, LogOut, CheckCircle, XCircle, Loader2, BellRing } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { database } from "@/lib/firebase";
 import { ref, set, get, remove } from "firebase/database";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   pageStyles,
   pageHeader,
-  darkModeToggle,
   responsive,
 } from "@/lib/design-system";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { session, signOut } = useAuth();
+  const { resolvedTheme, setTheme } = useTheme();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(false);
   const [appNotifications, setAppNotifications] = useState(true);
   const [pushPermission, setPushPermission] = useState<NotificationPermission>("default");
-  const [darkMode, setDarkMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPairing, setIsPairing] = useState(false);
   const [isTestingAlertCall, setIsTestingAlertCall] = useState(false);
   const [pairDialogOpen, setPairDialogOpen] = useState(false);
   const [deviceCode, setDeviceCode] = useState("");
   const [pairedDevices, setPairedDevices] = useState<Array<{id: string, name: string, date: string, status: string}>>([]);
-  const isFirstRender = useRef(true);
 
-  const userId = localStorage.getItem("deviceId") || "ARIGO_001";
+  const userId = session?.role === "device" ? session.deviceId : "ARIGO_001";
+  const darkMode = resolvedTheme === "dark";
 
   // Load settings from Firebase on mount (fallback to localStorage)
   useEffect(() => {
@@ -99,32 +102,10 @@ const Settings = () => {
       if ("Notification" in window) {
         setPushPermission(Notification.permission);
       }
-
-      // Apply dark mode
-      const savedDarkMode = localStorage.getItem("darkMode") === "true";
-      setDarkMode(savedDarkMode);
-      if (savedDarkMode) document.documentElement.classList.add("dark");
     };
 
     loadSettings();
   }, [userId]);
-
-  // Handle dark mode toggle (skip first render to avoid double toast)
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("darkMode", "true");
-      toast.success("Dark mode enabled");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("darkMode", "false");
-      toast.success("Light mode enabled");
-    }
-  }, [darkMode]);
 
   const handleSave = async () => {
     if (!name.trim()) {
@@ -305,8 +286,7 @@ const Settings = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("deviceId");
+    signOut();
     toast.success("Logged out successfully");
     navigate("/");
   };
@@ -360,19 +340,7 @@ const Settings = () => {
 
   return (
     <div className={`${pageStyles.gradientWrapper} ${responsive.pagePadding}`}>
-      {/* Dark Mode Toggle */}
-      <div className={darkModeToggle.wrapper}>
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className={darkModeToggle.button}
-        >
-          {darkMode ? (
-            <Sun className={darkModeToggle.iconClass} />
-          ) : (
-            <Moon className={darkModeToggle.iconClass} />
-          )}
-        </button>
-      </div>
+      <ThemeToggle />
 
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -393,7 +361,7 @@ const Settings = () => {
           <Card className="bg-gradient-to-br from-card to-card/80 backdrop-blur-md shadow-elevated border-border/50 rounded-2xl">
             <CardHeader className="border-b border-border/50">
               <div className="flex items-center gap-3">
-                <User className="w-6 h-6 text-blue-500" />
+                <User className="w-6 h-6 text-muted-foreground" />
                 <div>
                   <h2 className="text-xl font-semibold text-foreground">Profile</h2>
                   <p className="text-sm text-muted-foreground">Update your personal details</p>
@@ -427,7 +395,7 @@ const Settings = () => {
               <Button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                className="w-full h-11 bg-primary hover:bg-primary/90 text-white font-semibold"
               >
                 {isSaving ? (
                   <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving to cloud...</>
@@ -448,7 +416,7 @@ const Settings = () => {
           <Card className="bg-gradient-to-br from-card to-card/80 backdrop-blur-md shadow-elevated border-border/50 rounded-2xl">
             <CardHeader className="border-b border-border/50">
               <div className="flex items-center gap-3">
-                <Bell className="w-6 h-6 text-orange-500" />
+                <Bell className="w-6 h-6 text-warning" />
                 <div>
                   <h2 className="text-xl font-semibold text-foreground">Notifications</h2>
                   <p className="text-sm text-muted-foreground">Choose how you want to be notified</p>
@@ -486,12 +454,12 @@ const Settings = () => {
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-foreground">Push Notifications</p>
                       {pushPermission === "granted" && (
-                        <span className="flex items-center gap-1 text-xs text-green-600 font-semibold">
+                        <span className="flex items-center gap-1 text-xs text-primary font-semibold">
                           <CheckCircle className="w-3.5 h-3.5" /> Allowed
                         </span>
                       )}
                       {pushPermission === "denied" && (
-                        <span className="flex items-center gap-1 text-xs text-red-500 font-semibold">
+                        <span className="flex items-center gap-1 text-xs text-destructive font-semibold">
                           <XCircle className="w-3.5 h-3.5" /> Blocked
                         </span>
                       )}
@@ -512,8 +480,8 @@ const Settings = () => {
                 />
               </div>
 
-              <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-start gap-3">
-                <BellRing className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+              <div className="p-4 rounded-lg bg-muted border border-border flex items-start gap-3">
+                <BellRing className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
                 <p className="text-sm text-muted-foreground">
                   Notification preferences are saved to the cloud and synced across your devices. Push notifications require browser permission.
                 </p>
@@ -553,7 +521,7 @@ const Settings = () => {
             <CardHeader className="border-b border-border/50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <Smartphone className="w-6 h-6 text-green-500" />
+                  <Smartphone className="w-6 h-6 text-primary" />
                   <div>
                     <h2 className="text-xl font-semibold text-foreground">Connected Devices</h2>
                     <p className="text-sm text-muted-foreground">Manage your paired devices</p>
@@ -561,7 +529,7 @@ const Settings = () => {
                 </div>
                 <Dialog open={pairDialogOpen} onOpenChange={setPairDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-green-600 hover:bg-green-700 text-white">
+                    <Button className="bg-primary hover:bg-primary/90 text-white">
                       <Smartphone className="w-4 h-4 mr-2" />
                       Add Device
                     </Button>
@@ -616,7 +584,7 @@ const Settings = () => {
                   className="p-4 rounded-lg border border-border/50 flex items-center justify-between hover:bg-background/50 transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <Smartphone className="w-6 h-6 text-green-500" />
+                    <Smartphone className="w-6 h-6 text-primary" />
                     <div>
                       <p className="font-medium text-foreground">{device.name}</p>
                       <p className="text-xs text-muted-foreground font-mono">ID: {device.id}</p>
@@ -624,7 +592,7 @@ const Settings = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-600 text-xs font-semibold flex items-center gap-1">
+                    <span className="px-3 py-1 rounded-full bg-green-500/20 text-primary text-xs font-semibold flex items-center gap-1">
                       <CheckCircle className="w-3 h-3" />
                       {device.status || "Connected"}
                     </span>
@@ -654,7 +622,7 @@ const Settings = () => {
           <Card className="bg-gradient-to-br from-card to-card/80 backdrop-blur-md shadow-elevated border-border/50 rounded-2xl">
             <CardHeader className="border-b border-border/50">
               <div className="flex items-center gap-3">
-                <Palette className="w-6 h-6 text-purple-500" />
+                <Palette className="w-6 h-6 text-muted-foreground" />
                 <div>
                   <h2 className="text-xl font-semibold text-foreground">Appearance</h2>
                   <p className="text-sm text-muted-foreground">Customize the look and feel</p>
@@ -665,9 +633,9 @@ const Settings = () => {
               <div className="p-4 rounded-lg border border-border/50 flex items-center justify-between hover:bg-background/50 transition-colors">
                 <div className="flex items-center gap-4">
                   {darkMode ? (
-                    <Moon className="w-6 h-6 text-purple-500" />
+                    <Moon className="w-6 h-6 text-muted-foreground" />
                   ) : (
-                    <Sun className="w-6 h-6 text-yellow-500" />
+                    <Sun className="w-6 h-6 text-warning" />
                   )}
                   <div>
                     <p className="font-medium text-foreground">
@@ -678,7 +646,10 @@ const Settings = () => {
                     </p>
                   </div>
                 </div>
-                <Switch checked={darkMode} onCheckedChange={setDarkMode} />
+                <Switch
+                  checked={darkMode}
+                  onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+                />
               </div>
             </CardContent>
           </Card>

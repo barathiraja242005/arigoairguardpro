@@ -42,8 +42,8 @@ const AQIGauge = ({ value }: AQIGaugeProps) => {
             <linearGradient id="aqiGradient" x1="0%" y1="0%" x2="100%" y2="0%">
               {value <= 50 ? (
                 <>
-                  <stop offset="0%" stopColor="hsl(152, 56%, 40%)" />
-                  <stop offset="100%" stopColor="hsl(145, 35%, 42%)" />
+                  <stop offset="0%" stopColor="hsl(140, 53%, 45%)" />
+                  <stop offset="100%" stopColor="hsl(140, 45%, 48%)" />
                 </>
               ) : value <= 100 ? (
                 <>

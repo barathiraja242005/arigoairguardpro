@@ -671,10 +671,10 @@ I can now help you with:
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed flex h-14 w-14 items-center justify-center rounded-full shadow-xl ${buttonPositionClass}`}
         style={{
-          background: "linear-gradient(135deg, hsl(25,95%,53%), hsl(345,65%,47%))",
+          background: "linear-gradient(135deg, hsl(140,45%,38%), hsl(140,45%,38%))",
           boxShadow: isOpen
-            ? "0 4px 16px hsl(25,95%,53%,0.3)"
-            : "0 4px 24px hsl(25,95%,53%,0.4)",
+            ? "0 4px 16px hsl(140,45%,38%,0.3)"
+            : "0 4px 24px hsl(140,45%,38%,0.4)",
           animation: isOpen ? "none" : "chatbot-pulse 2s ease-in-out infinite",
         }}
         whileHover={{ scale: 1.1 }}
@@ -722,7 +722,7 @@ I can now help you with:
               className="flex h-[520px] flex-col rounded-2xl overflow-hidden shadow-2xl border"
               style={{
                 background: "hsl(20,18%,8%)",
-                borderColor: "hsl(25,30%,18%)",
+                borderColor: "hsl(0,0%,20%)",
               }}
             >
               {/* ── Gradient Header ── */}
@@ -730,7 +730,7 @@ I can now help you with:
                 className="relative px-5 py-4 shrink-0"
                 style={{
                   background:
-                    "linear-gradient(135deg, hsl(25,95%,53%) 0%, hsl(345,65%,47%) 100%)",
+                    "linear-gradient(135deg, hsl(140,45%,38%) 0%, hsl(140,45%,38%) 100%)",
                 }}
               >
                 <div className="flex items-center gap-3">
@@ -788,7 +788,7 @@ I can now help you with:
                         background:
                           msg.role === "user"
                             ? "linear-gradient(135deg, hsl(142,76%,36%), hsl(142,76%,50%))"
-                            : "linear-gradient(135deg, hsl(25,95%,53%), hsl(345,65%,47%))",
+                            : "linear-gradient(135deg, hsl(140,45%,38%), hsl(140,45%,38%))",
                       }}
                     >
                       {msg.role === "user" ? (
@@ -809,7 +809,7 @@ I can now help you with:
                         style={{
                           background:
                             msg.role === "user"
-                              ? "linear-gradient(135deg, hsl(25,95%,53%), hsl(345,65%,47%))"
+                              ? "linear-gradient(135deg, hsl(140,45%,38%), hsl(140,45%,38%))"
                               : "rgba(255,255,255,0.06)",
                         }}
                       >
@@ -854,7 +854,7 @@ I can now help you with:
                       className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
                       style={{
                         background:
-                          "linear-gradient(135deg, hsl(25,95%,53%), hsl(345,65%,47%))",
+                          "linear-gradient(135deg, hsl(140,45%,38%), hsl(140,45%,38%))",
                       }}
                     >
                       <Leaf className="h-4 w-4 text-white" />
@@ -868,19 +868,19 @@ I can now help you with:
                           animate={{ y: [0, -4, 0] }}
                           transition={{ repeat: Infinity, duration: 0.6, delay: 0 }}
                           className="h-2 w-2 rounded-full"
-                          style={{ background: "hsl(25,95%,53%)" }}
+                          style={{ background: "hsl(140,45%,38%)" }}
                         />
                         <motion.span
                           animate={{ y: [0, -4, 0] }}
                           transition={{ repeat: Infinity, duration: 0.6, delay: 0.15 }}
                           className="h-2 w-2 rounded-full"
-                          style={{ background: "hsl(25,95%,60%)" }}
+                          style={{ background: "hsl(140,55%,58%)" }}
                         />
                         <motion.span
                           animate={{ y: [0, -4, 0] }}
                           transition={{ repeat: Infinity, duration: 0.6, delay: 0.3 }}
                           className="h-2 w-2 rounded-full"
-                          style={{ background: "hsl(345,65%,47%)" }}
+                          style={{ background: "hsl(140,45%,38%)" }}
                         />
                       </div>
                     </div>
@@ -905,7 +905,7 @@ I can now help you with:
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: i * 0.05 }}
                         onClick={() => sendMessage(action)}
-                        className="rounded-full px-3 py-1.5 text-[10px] font-semibold transition-all duration-200 hover:!bg-[hsl(25,95%,53%,0.15)] hover:!text-[hsl(25,95%,65%)] hover:!border-[hsl(25,95%,53%,0.3)]"
+                        className="rounded-full px-3 py-1.5 text-[10px] font-semibold transition-all duration-200 hover:!bg-[hsl(140,45%,38%,0.15)] hover:!text-[hsl(140,55%,68%)] hover:!border-[hsl(140,45%,38%,0.3)]"
                         style={{
                           background: "rgba(255,255,255,0.05)",
                           color: "rgba(255,255,255,0.5)",
@@ -929,7 +929,7 @@ I can now help you with:
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Talk to CURA..."
-                  className="flex-1 border-none text-sm text-white placeholder:text-white/30 focus-visible:ring-1 focus-visible:ring-[hsl(25,95%,53%,0.3)]"
+                  className="flex-1 border-none text-sm text-white placeholder:text-white/30 focus-visible:ring-1 focus-visible:ring-[hsl(140,45%,38%,0.3)]"
                   style={{ background: "rgba(255,255,255,0.05)" }}
                   disabled={isTyping}
                 />
@@ -939,7 +939,7 @@ I can now help you with:
                   disabled={!input.trim() || isTyping}
                   className="h-9 w-9 shrink-0 rounded-full border-none disabled:opacity-30"
                   style={{
-                    background: "linear-gradient(135deg, hsl(25,95%,53%), hsl(345,65%,47%))",
+                    background: "linear-gradient(135deg, hsl(140,45%,38%), hsl(140,45%,38%))",
                   }}
                 >
                   <Send className="h-4 w-4 text-white" />
@@ -953,8 +953,8 @@ I can now help you with:
       {/* Pulse animation keyframes */}
       <style>{`
         @keyframes chatbot-pulse {
-          0%, 100% { box-shadow: 0 4px 24px hsl(25,95%,53%,0.4), 0 0 0 0 hsl(25,95%,53%,0.3); }
-          50% { box-shadow: 0 4px 24px hsl(25,95%,53%,0.4), 0 0 0 12px hsl(25,95%,53%,0); }
+          0%, 100% { box-shadow: 0 4px 24px hsl(140,45%,38%,0.4), 0 0 0 0 hsl(140,45%,38%,0.3); }
+          50% { box-shadow: 0 4px 24px hsl(140,45%,38%,0.4), 0 0 0 12px hsl(140,45%,38%,0); }
         }
       `}</style>
     </>

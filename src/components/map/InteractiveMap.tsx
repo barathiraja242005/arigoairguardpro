@@ -121,8 +121,7 @@ const InteractiveMap = ({ onLocationSelect }: InteractiveMapProps) => {
               }
             }
             throw new Error('No results from API');
-          } catch (error) {
-            console.log("Using simulated AQI data (API unavailable):", error);
+          } catch {
             const generated = generateNearbyLocations(userLat, userLng);
             setNearbyLocations(generated);
             toast({ title: "Simulated AQI Data", description: `Showing ${generated.length} monitoring points near you` });

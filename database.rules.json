@@ -1,6 +1,38 @@
 {
   "rules": {
-    ".read": "true",
-    ".write": "true"
+    ".read": false,
+    ".write": false,
+
+    "airguard_devices": {
+      "$deviceId": {
+        ".read": "auth != null",
+        "latest_reading": {
+          ".write": "auth != null"
+        },
+        "history": {
+          ".write": "auth != null"
+        },
+        "device_status": {
+          ".write": "auth != null"
+        },
+        "user_location": {
+          ".write": "auth != null"
+        },
+        "alerts": {
+          ".write": "auth != null"
+        }
+      }
+    },
+
+    "users": {
+      "$userId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+
+    "devices": {
+      ".read": "auth != null"
+    }
   }
 }

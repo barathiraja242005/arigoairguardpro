@@ -78,6 +78,7 @@ function ssmlProsodyRate(rate) {
 
 function buildAlertText({ deviceId, aqi }) {
   return {
+    
     main: `Alert from AriGo Air Guard Pro. The air quality index is ${aqi || "above safe levels"} for device ${deviceId}. Please wear the mask attached to your device and reduce outdoor activity.`,
     outro: "Stay safe. Goodbye.",
   };

@@ -12,8 +12,8 @@ const addDataPoint = async () => {
   const deviceId = localStorage.getItem("deviceId") || DEFAULT_DEVICE_ID;
   const now = new Date();
 
-  const lat = 12.83968;
-  const lng = 80.15524;
+  const lat = 12.9624055;
+  const lng = 77.5964362;
 
   const newData = {
     "After aqi": parseFloat((Math.random() * 20).toFixed(2)),
@@ -62,8 +62,12 @@ const addDataPoint = async () => {
 
 let fluctuationInterval: any = null;
 
-// Starts sending data to Firebase every 3 seconds
+// Starts sending data to Firebase every 3 seconds (dev/test only)
 export const startFluctuation = () => {
+  if (!import.meta.env.DEV) {
+    toast.error("Data simulator is disabled in production builds.");
+    return;
+  }
   if (fluctuationInterval) {
     toast.info("Fluctuation is already running.");
     return;

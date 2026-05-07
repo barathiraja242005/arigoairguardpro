@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import DemoBadge from "@/components/ui/DemoBadge";
 import { useToast } from "@/hooks/use-toast";
-import {
-  pageStyles,
-} from "@/lib/design-system";
+import { authenticateDevice, DEMO_DEVICE, DEMO_MODE_ENABLED } from "@/lib/demoAuth";
+import { useAuth } from "@/contexts/AuthContext";
+import { pageStyles } from "@/lib/design-system";
 
 const loginSchema = z.object({
   deviceId: z.string()
@@ -25,23 +26,17 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-// Dummy credentials
-const DUMMY_CREDENTIALS = {
-  deviceId: "ARIGO_001",
-  password: "airguard123"
-};
-
 export default function Login() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { session, signInDevice } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem("isAuthenticated");
-    if (isAuthenticated) {
-      navigate("/dashboard");
+    if (session?.role === "device") {
+      navigate("/dashboard", { replace: true });
     }
-  }, [navigate]);
+  }, [session, navigate]);
 
   const {
     register,
@@ -50,50 +45,47 @@ export default function Login() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      deviceId: DUMMY_CREDENTIALS.deviceId,
+      deviceId: DEMO_MODE_ENABLED ? DEMO_DEVICE.id : "",
       password: "",
     },
   });
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
-    
-    try {
-      // Simulate device connection
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (data.deviceId === DUMMY_CREDENTIALS.deviceId && data.password === DUMMY_CREDENTIALS.password) {
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("deviceId", data.deviceId);
-        
-        toast({
-          title: "Device Connected",
-          description: `Successfully connected to device ${data.deviceId}`,
-        });
-        
-        navigate("/dashboard");
-      } else {
-        throw new Error("Invalid credentials");
-      }
-    } catch (error) {
+    await new Promise((r) => setTimeout(r, 600));
+
+    const result = authenticateDevice(data.deviceId, data.password);
+    if (result.ok && result.deviceId) {
+      signInDevice(result.deviceId);
+      toast({
+        title: "Device Connected",
+        description: `Successfully connected to device ${result.deviceId}`,
+      });
+      navigate("/dashboard", { replace: true });
+    } else {
       toast({
         title: "Connection Failed",
-        description: "Invalid device ID or password. Try: ARIGO_001 / airguard123",
+        description: DEMO_MODE_ENABLED
+          ? `Try ${DEMO_DEVICE.id} / ${DEMO_DEVICE.password}`
+          : "Invalid device ID or password",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
 
   return (
     <div className={pageStyles.centeredWrapper}>
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className={`text-4xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-2`}>
+        <div className="text-center mb-6 space-y-2">
+          <h1 className="text-4xl font-bold bg-gradient-hero bg-clip-text text-transparent">
             AriGo AirGuard Pro
           </h1>
           <p className="text-muted-foreground">Connect your device to start monitoring</p>
+          <div className="flex justify-center pt-1">
+            <DemoBadge />
+          </div>
         </div>
 
         <Card className="border-primary/20 bg-card/80 backdrop-blur-md shadow-elevated">
@@ -102,9 +94,7 @@ export default function Login() {
               <Wifi className="h-6 w-6 text-primary" />
               Device Login
             </CardTitle>
-            <CardDescription>
-              Enter your device credentials to connect
-            </CardDescription>
+            <CardDescription>Enter your device credentials to connect</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -139,17 +129,15 @@ export default function Login() {
                 )}
               </div>
 
-              <div className="text-xs text-muted-foreground bg-primary/5 border border-primary/10 p-3 rounded-lg">
-                <strong className="text-primary">Demo Credentials:</strong><br />
-                Device ID: ARIGO_001<br />
-                Password: airguard123
-              </div>
+              {DEMO_MODE_ENABLED && (
+                <div className="text-xs text-muted-foreground bg-primary/5 border border-primary/10 p-3 rounded-lg">
+                  <strong className="text-primary">Demo Credentials:</strong><br />
+                  Device ID: {DEMO_DEVICE.id}<br />
+                  Password: {DEMO_DEVICE.password}
+                </div>
+              )}
 
-              <Button
-                type="submit" 
-                className="w-full" 
-                disabled={isLoading}
-              >
+              <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -160,10 +148,6 @@ export default function Login() {
                 )}
               </Button>
             </form>
-
-            <div className="mt-6 text-center text-sm text-muted-foreground">
-              <p>Need help? Contact support</p>
-            </div>
           </CardContent>
         </Card>
       </div>

@@ -1,15 +1,12 @@
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment, PerspectiveCamera } from "@react-three/drei";
 import Device3D from "@/components/home/Device3D";
-import { useToast } from "@/hooks/use-toast";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import DemoBadge from "@/components/ui/DemoBadge";
 import {
   Wind,
   Shield,
@@ -22,73 +19,12 @@ import {
   AlertTriangle,
   Heart,
   LogIn,
-  Lock,
-  Sun,
-  Moon,
+  Map as MapIcon,
 } from "lucide-react";
-import {
-  pageStyles,
-  darkModeToggle,
-  buttonStyles,
-  formStyles,
-} from "@/lib/design-system";
+import { pageStyles, buttonStyles } from "@/lib/design-system";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [deviceId, setDeviceId] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [darkMode, setDarkMode] = useState(() => {
-    const savedMode = localStorage.getItem("darkMode");
-    return savedMode === "true";
-  });
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("darkMode", "true");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("darkMode", "false");
-    }
-  }, [darkMode]);
-
-  // Dummy credentials
-  const DUMMY_CREDENTIALS = {
-    deviceId: "ARIGO_001",
-    password: "airguard123"
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    if (deviceId === DUMMY_CREDENTIALS.deviceId && password === DUMMY_CREDENTIALS.password) {
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("deviceId", deviceId);
-      
-      toast({
-        title: "Login Successful",
-        description: `Connected to device ${deviceId}`,
-      });
-      
-      setIsLoginOpen(false);
-      navigate("/dashboard");
-    } else {
-      toast({
-        title: "Login Failed",
-        description: "Invalid device ID or password",
-        variant: "destructive",
-      });
-    }
-    
-    setIsLoading(false);
-  };
 
   const specifications = [
     { icon: Ruler, label: "Height", value: "17 cm", detail: "~6.69 inches" },
@@ -143,16 +79,7 @@ const Home = () => {
         <div className="absolute top-1/3 -right-32 h-80 w-80 rounded-full bg-secondary/10 blur-3xl" />
       </div>
 
-      <div className={darkModeToggle.wrapper}>
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={() => setDarkMode(!darkMode)}
-          className={darkModeToggle.button}
-        >
-          {darkMode ? <Sun className={darkModeToggle.iconClass} /> : <Moon className={darkModeToggle.iconClass} />}
-        </Button>
-      </div>
+      <ThemeToggle />
 
       {/* Hero Section */}
       <div className="container mx-auto px-4 pt-20 pb-14 relative z-10">
@@ -186,85 +113,35 @@ const Home = () => {
               <p className="text-base md:text-lg text-muted-foreground max-w-xl">
                 Compact, powerful, and intelligent air purification in the palm of your hand
               </p>
+              <div className="mt-4">
+                <DemoBadge />
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-3 mb-8">
-              <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    size="lg"
-                    className={`${buttonStyles.heroGradient} px-8 h-11 rounded-xl group`}
-                  >
-                    <LogIn className="mr-2 w-4 h-4" />
-                    Device Login
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md bg-card">
-                  <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                      <Lock className="w-5 h-5 text-primary" />
-                      Connect Your Device
-                    </DialogTitle>
-                    <DialogDescription>
-                      Enter your device credentials to access the dashboard
-                    </DialogDescription>
-                  </DialogHeader>
-                  <form onSubmit={handleLogin} className="space-y-4 mt-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="deviceId">Device ID</Label>
-                      <Input
-                        id="deviceId"
-                        placeholder="Enter device ID"
-                        value={deviceId}
-                        onChange={(e) => setDeviceId(e.target.value)}
-                        disabled={isLoading}
-                        required
-                        className="bg-background"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="Enter password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        disabled={isLoading}
-                        required
-                        className="bg-background"
-                      />
-                    </div>
-                    <div className={formStyles.demoCredentials}>
-                      <strong>Demo Credentials:</strong><br />
-                      Device ID: ARIGO_001<br />
-                      Password: airguard123
-                    </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Connecting..." : "Connect Device"}
-                    </Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
               <Button
                 size="lg"
-                variant="outline"
-                className="border-2 h-11 rounded-xl bg-card/70 backdrop-blur-sm"
-                onClick={() => navigate("/admin-login")}
+                className={`${buttonStyles.heroGradient} px-8 h-11 rounded-xl group`}
+                onClick={() => navigate("/login")}
               >
-                Admin Login
+                <LogIn className="mr-2 w-4 h-4" />
+                Device Login
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-2 h-11 rounded-xl bg-card/70 backdrop-blur-sm"
+                onClick={() => navigate("/map")}
+              >
+                <MapIcon className="mr-2 w-4 h-4" />
+                Pollution Portal
+              </Button>
+              <Button
+                size="lg"
+                variant="ghost"
+                className="h-11 rounded-xl"
                 onClick={() => {
-                  const element = document.getElementById('features');
-                  element?.scrollIntoView({ behavior: 'smooth' });
+                  document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
                 Learn More
@@ -426,30 +303,10 @@ const Home = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
               {[
-                {
-                  stat: "7M+",
-                  label: "Deaths Annually",
-                  description: "Premature deaths caused by air pollution worldwide",
-                  colorClass: "text-destructive",
-                },
-                {
-                  stat: "91%",
-                  label: "Population Affected",
-                  description: "Of world's population breathes polluted air",
-                  colorClass: "text-warning",
-                },
-                {
-                  stat: "$8.1T",
-                  label: "Economic Cost",
-                  description: "Annual global cost of air pollution damages",
-                  colorClass: "text-warning",
-                },
-                {
-                  stat: "99%",
-                  label: "WHO Guideline",
-                  description: "Of cities exceed WHO air quality guidelines",
-                  colorClass: "text-destructive",
-                },
+                { stat: "7M+", label: "Deaths Annually", description: "Premature deaths caused by air pollution worldwide", colorClass: "text-destructive" },
+                { stat: "91%", label: "Population Affected", description: "Of world's population breathes polluted air", colorClass: "text-warning" },
+                { stat: "$8.1T", label: "Economic Cost", description: "Annual global cost of air pollution damages", colorClass: "text-warning" },
+                { stat: "99%", label: "WHO Guideline", description: "Of cities exceed WHO air quality guidelines", colorClass: "text-destructive" },
               ].map((item, index) => (
                 <motion.div
                   key={item.stat}
@@ -473,21 +330,9 @@ const Home = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                {
-                  icon: Heart,
-                  title: "Health Impact",
-                  description: "Air pollution causes respiratory diseases, heart conditions, strokes, and reduces life expectancy significantly.",
-                },
-                {
-                  icon: AlertTriangle,
-                  title: "Major Pollutants",
-                  description: "PM2.5, PM10, CO, NO₂, SO₂, and O₃ are primary air pollutants affecting human health and environment.",
-                },
-                {
-                  icon: Shield,
-                  title: "Our Solution",
-                  description: "AriGo AirGuard Pro provides personal protection with real-time monitoring and advanced 3-stage filtration.",
-                },
+                { icon: Heart, title: "Health Impact", description: "Air pollution causes respiratory diseases, heart conditions, strokes, and reduces life expectancy significantly." },
+                { icon: AlertTriangle, title: "Major Pollutants", description: "PM2.5, PM10, CO, NO₂, SO₂, and O₃ are primary air pollutants affecting human health and environment." },
+                { icon: Shield, title: "Our Solution", description: "AriGo AirGuard Pro provides personal protection with real-time monitoring and advanced 3-stage filtration." },
               ].map((info, index) => (
                 <motion.div
                   key={info.title}
@@ -511,9 +356,6 @@ const Home = () => {
           </motion.div>
         </div>
       </div>
-
-      {/* CTA Section */}
-
     </div>
   );
 };

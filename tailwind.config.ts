@@ -121,8 +121,8 @@ export default {
           "100%": { transform: "scale(1)", opacity: "1" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(25 95% 53% / 0.3)" },
-          "50%": { boxShadow: "0 0 40px hsl(25 95% 53% / 0.5)" },
+          "0%, 100%": { boxShadow: "0 0 20px hsl(140 50% 42% / 0.3)" },
+          "50%": { boxShadow: "0 0 40px hsl(140 50% 42% / 0.5)" },
         },
         "spin-slow": {
           "0%": { transform: "rotate(0deg)" },

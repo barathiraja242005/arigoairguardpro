@@ -5,9 +5,10 @@ interface FilterHealthProps {
   preFilter: number;
   hepa: number;
   carbon: number;
+  nextServiceDays?: number;
 }
 
-const FilterHealth = ({ preFilter, hepa, carbon }: FilterHealthProps) => {
+const FilterHealth = ({ preFilter, hepa, carbon, nextServiceDays }: FilterHealthProps) => {
   const filters = [
     { name: "Pre-Filter", value: preFilter, icon: Filter, color: "bg-primary", trackColor: "bg-border" },
     { name: "HEPA", value: hepa, icon: Shield, color: "bg-secondary", trackColor: "bg-border" },
@@ -42,16 +43,21 @@ const FilterHealth = ({ preFilter, hepa, carbon }: FilterHealthProps) => {
         </motion.div>
       ))}
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="mt-6 p-4 rounded-lg bg-muted/50 border border-border"
-      >
-        <p className="text-sm text-muted-foreground">
-          <span className="font-semibold text-foreground">Next Service:</span> Replace HEPA filter in 15 days
-        </p>
-      </motion.div>
+      {nextServiceDays !== undefined && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mt-6 p-4 rounded-lg bg-muted/50 border border-border"
+        >
+          <p className="text-sm text-muted-foreground">
+            <span className="font-semibold text-foreground">Next Service:</span>{" "}
+            {nextServiceDays > 0
+              ? `Replace HEPA filter in ${nextServiceDays} days`
+              : "Service due now"}
+          </p>
+        </motion.div>
+      )}
     </div>
   );
 };

@@ -2,18 +2,18 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import AQIGauge from "@/components/dashboard/AQIGauge";
 import FilterHealth from "@/components/dashboard/FilterHealth";
-import FluctuatingBatteryStatus from "@/components/dashboard/FluctuatingBatteryStatus";
+import BatteryStatus from "@/components/dashboard/BatteryStatus";
 import FluctuatingPollutantLevels from "@/components/dashboard/FluctuatingPollutantLevels";
 import ByproductStats from "@/components/dashboard/ByproductStats";
 import DeviceTrendsChart from "@/components/dashboard/DeviceTrendsChart";
-import { MapPin, ShieldCheck, Thermometer, Droplets, Wind, Sun, Moon } from "lucide-react";
-import { useState, useEffect } from "react";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import { MapPin, ShieldCheck, Thermometer, Droplets, Wind } from "lucide-react";
 import { useAirguardDeviceAnalytics } from "@/hooks/useAirguardDeviceAnalytics";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   pageStyles,
   pageHeader,
   cardStyles,
-  darkModeToggle,
   gridStyles,
   typography,
   containerVariants,
@@ -21,23 +21,10 @@ import {
 } from "@/lib/design-system";
 
 const Dashboard = () => {
-  const [darkMode, setDarkMode] = useState(false);
-
-  const deviceId = localStorage.getItem("deviceId") || "AIRGUARD_001";
-  const { loading, error, latestMetrics, status, location, todayHistory, todayKey } =
+  const { session } = useAuth();
+  const deviceId = session?.role === "device" ? session.deviceId : "AIRGUARD_001";
+  const { loading, error, latestMetrics, status, location, filterHealth, todayHistory, todayKey } =
     useAirguardDeviceAnalytics(deviceId);
-
-  useEffect(() => {
-    const savedMode = localStorage.getItem("darkMode");
-    const isDarkMode = savedMode === "true";
-    setDarkMode(isDarkMode);
-    
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
 
   const stats = [
     {
@@ -74,28 +61,7 @@ const Dashboard = () => {
 
   return (
     <div className={pageStyles.wrapper}>
-      <div className={darkModeToggle.wrapper}>
-        <button
-          onClick={() => {
-            const newDarkMode = !darkMode;
-            setDarkMode(newDarkMode);
-            localStorage.setItem("darkMode", newDarkMode.toString());
-            if (newDarkMode) {
-              document.documentElement.classList.add("dark");
-            } else {
-              document.documentElement.classList.remove("dark");
-            }
-          }}
-          className={darkModeToggle.button}
-          aria-label="Toggle dark mode"
-        >
-          {darkMode ? (
-            <Sun className={darkModeToggle.iconClass} />
-          ) : (
-            <Moon className={darkModeToggle.iconClass} />
-          )}
-        </button>
-      </div>
+      <ThemeToggle />
       <div className={pageStyles.container}>
         {/* Header */}
         <motion.div
@@ -191,22 +157,32 @@ const Dashboard = () => {
           <motion.div variants={cardVariants} className="space-y-6">
             <Card className={`${cardStyles.padding} ${cardStyles.base} shadow-card`}>
               <h2 className={`${typography.cardTitle} mb-4`}>Battery Status</h2>
-              <FluctuatingBatteryStatus basePercentage={78} />
+              <BatteryStatus
+                percentage={status?.battery_percent}
+                isCharging={false}
+              />
             </Card>
             <Card className={`${cardStyles.padding} ${cardStyles.base} shadow-card`}>
               <h2 className={`${typography.cardTitle} mb-4`}>Filter Health</h2>
-              <FilterHealth
-                preFilter={85}
-                hepa={72}
-                carbon={68}
-              />
+              {filterHealth ? (
+                <FilterHealth
+                  preFilter={filterHealth.pre_filter ?? 0}
+                  hepa={filterHealth.hepa ?? 0}
+                  carbon={filterHealth.carbon ?? 0}
+                  nextServiceDays={filterHealth.next_service_days}
+                />
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Awaiting filter calibration data from device.
+                </p>
+              )}
             </Card>
           </motion.div>
 
           {/* Trends - Full width */}
           <motion.div variants={cardVariants} className="lg:col-span-2">
             <Card className={`${cardStyles.padding} ${cardStyles.base} shadow-card`}>
-              <h2 className={`${typography.cardTitle} mb-1`}>Today’s Pollution Trends</h2>
+              <h2 className={`${typography.cardTitle} mb-1`}>Today's Pollution Trends</h2>
               <p className="text-sm text-muted-foreground mb-6">
                 Trend for {todayKey} (AQI and PM2.5 from your device history)
               </p>

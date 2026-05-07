@@ -31,11 +31,13 @@ import AIChatbot from "@/components/chat/AIChatbot";
 import { pollutionHotspots } from "@/data/pollutionHotspots";
 import { getNearbyNGOs } from "@/data/ngoData";
 import { indianStates, getAqiColor } from "@/lib/statePollutionData";
+import { useAuth } from "@/contexts/AuthContext";
 
 /* ─── Component ─── */
 
 const AdminPollutionMap = () => {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
 
   const [selectedPollutant, setSelectedPollutant] = useState<string | null>(null);
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
@@ -96,6 +98,7 @@ const AdminPollutionMap = () => {
   };
 
   const handleLogout = () => {
+    signOut();
     navigate("/map");
   };
 
@@ -118,10 +121,10 @@ const AdminPollutionMap = () => {
         <motion.div
           initial={{ y: -40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="absolute top-4 right-4 z-[1000] flex items-center gap-2"
+          className="absolute top-4 right-4 z-[1000] flex flex-wrap items-center gap-2 max-w-[calc(100%-2rem)] justify-end"
         >
           {/* National Avg AQI */}
-          <div className="hidden md:flex items-center gap-1.5 bg-card/90 backdrop-blur-md rounded-lg px-3 py-2 shadow-lg border border-border">
+          <div className="flex items-center gap-1.5 bg-card/90 backdrop-blur-md rounded-lg px-3 py-2 shadow-lg border border-border">
             <Activity className="w-3.5 h-3.5 text-primary" />
             <span className="text-[10px] font-bold text-foreground">
               National Avg: {analytics.avgAqi}
@@ -168,7 +171,7 @@ const AdminPollutionMap = () => {
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center"
               style={{
-                background: "linear-gradient(135deg, hsl(25,95%,53%), hsl(345,65%,47%))",
+                background: "linear-gradient(135deg, hsl(140,45%,38%), hsl(140,45%,38%))",
               }}
             >
               <ShieldCheck className="w-3.5 h-3.5 text-white" />
@@ -200,7 +203,7 @@ const AdminPollutionMap = () => {
               className="absolute top-16 left-16 z-[1000] w-[300px] max-h-[calc(100vh-120px)] overflow-y-auto rounded-2xl shadow-2xl border"
               style={{
                 background: "hsl(20,18%,10%)",
-                borderColor: "hsl(25,30%,18%)",
+                borderColor: "hsl(0,0%,20%)",
                 scrollbarWidth: "thin",
               }}
             >
@@ -217,7 +220,7 @@ const AdminPollutionMap = () => {
                 className="px-5 pt-5 pb-4"
                 style={{
                   background:
-                    "linear-gradient(135deg, hsl(25,95%,53%,0.15), transparent 70%)",
+                    "linear-gradient(135deg, hsl(140,45%,38%,0.15), transparent 70%)",
                 }}
               >
                 <h3 className="text-sm font-extrabold text-white flex items-center gap-2">
@@ -230,7 +233,7 @@ const AdminPollutionMap = () => {
               {/* Quick Stats */}
               <div className="px-4 py-3 grid grid-cols-2 gap-2">
                 {[
-                  { label: "Total Hotspots", value: analytics.totalHotspots, color: "hsl(25,95%,53%)" },
+                  { label: "Total Hotspots", value: analytics.totalHotspots, color: "hsl(140,45%,38%)" },
                   { label: "Emergency", value: analytics.emergencyHotspots, color: "#ef4444" },
                   { label: "Improving", value: analytics.improvingStates, color: "#22c55e" },
                   { label: "Worsening", value: analytics.worseningStates, color: "#f59e0b" },
@@ -437,12 +440,12 @@ const AdminPollutionMap = () => {
         }
         .state-label-tooltip {
           background: rgba(255,255,255,0.95) !important;
-          border: 2px solid hsl(25,95%,53%) !important;
+          border: 2px solid hsl(140,45%,38%) !important;
           border-radius: 10px !important;
           padding: 6px 14px !important;
           font-weight: 800 !important;
           font-size: 12px !important;
-          color: hsl(25,40%,20%) !important;
+          color: hsl(0,0%,9%) !important;
           box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
           letter-spacing: 0.3px !important;
         }

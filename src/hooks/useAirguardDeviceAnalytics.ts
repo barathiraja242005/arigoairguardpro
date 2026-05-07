@@ -22,6 +22,14 @@ export interface AirguardUserLocation {
   updated_at?: string;
 }
 
+export interface AirguardFilterHealth {
+  pre_filter?: number;
+  hepa?: number;
+  carbon?: number;
+  next_service_days?: number;
+  updated_at?: string;
+}
+
 export interface AirguardHistoryPoint {
   timeKey: string; // HH:mm:ss
   recordedAt?: string;
@@ -61,6 +69,7 @@ export function useAirguardDeviceAnalytics(deviceId: string) {
   const [latest, setLatest] = useState<AirguardLatestReading>(null);
   const [status, setStatus] = useState<AirguardDeviceStatus | null>(null);
   const [location, setLocation] = useState<AirguardUserLocation | null>(null);
+  const [filterHealth, setFilterHealth] = useState<AirguardFilterHealth | null>(null);
   const [todayHistoryRaw, setTodayHistoryRaw] = useState<Record<string, any> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -95,6 +104,10 @@ export function useAirguardDeviceAnalytics(deviceId: string) {
       setLocation(snap.exists() ? (snap.val() as AirguardUserLocation) : null);
     });
 
+    const unsubFilter = onValue(ref(database, `${root}/filter_health`), (snap) => {
+      setFilterHealth(snap.exists() ? (snap.val() as AirguardFilterHealth) : null);
+    });
+
     const unsubHistory = onValue(ref(database, `${root}/history/${todayKey}`), (snap) => {
       setTodayHistoryRaw(snap.exists() ? (snap.val() as Record<string, any>) : null);
     });
@@ -103,6 +116,7 @@ export function useAirguardDeviceAnalytics(deviceId: string) {
       unsubLatest();
       unsubStatus();
       unsubLocation();
+      unsubFilter();
       unsubHistory();
     };
   }, [deviceId, todayKey]);
@@ -152,6 +166,7 @@ export function useAirguardDeviceAnalytics(deviceId: string) {
     latestMetrics,
     status,
     location,
+    filterHealth,
     todayHistory,
   };
 }

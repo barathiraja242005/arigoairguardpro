@@ -14,6 +14,9 @@ import {
 } from "lucide-react";
 import { pageStyles } from "@/lib/design-system";
 import { ngoCredentialsList } from "@/lib/statePollutionData";
+import { authenticateNgo, DEMO_MODE_ENABLED } from "@/lib/demoAuth";
+import { useAuth } from "@/contexts/AuthContext";
+import DemoBadge from "@/components/ui/DemoBadge";
 
 const NGOLogin = () => {
   const [username, setUsername] = useState("");
@@ -25,6 +28,13 @@ const NGOLogin = () => {
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { session, signInNgo } = useAuth();
+
+  useEffect(() => {
+    if (session?.role === "ngo") {
+      navigate("/ngo-dashboard", { replace: true });
+    }
+  }, [session, navigate]);
 
   const filteredCredentials = ngoCredentialsList.filter(
     (c) =>
@@ -87,17 +97,12 @@ const NGOLogin = () => {
     setError("");
     setIsLoading(true);
 
-    await new Promise((r) => setTimeout(r, 800));
+    await new Promise((r) => setTimeout(r, 600));
 
-    const matched = ngoCredentialsList.find(
-      (c) => c.username === username && c.password === password
-    );
-
-    if (matched) {
-      localStorage.setItem("ngoAuthenticated", "true");
-      localStorage.setItem("ngoName", matched.ngoName);
-      localStorage.setItem("ngoState", matched.state);
-      navigate("/ngo-dashboard");
+    const result = authenticateNgo(username, password);
+    if (result.ok && result.ngoName && result.state) {
+      signInNgo(result.ngoName, result.state);
+      navigate("/ngo-dashboard", { replace: true });
     } else {
       setError("Invalid NGO credentials");
     }
@@ -128,6 +133,9 @@ const NGOLogin = () => {
             <p className="text-muted-foreground mt-1">
               State-level pollution monitoring & AI recommendations
             </p>
+            <div className="flex justify-center pt-3">
+              <DemoBadge />
+            </div>
           </div>
 
           <Card className="bg-card/80 backdrop-blur-md shadow-elevated border-primary/10">
@@ -226,9 +234,11 @@ const NGOLogin = () => {
                   <p className="text-sm text-destructive">{error}</p>
                 )}
 
-                <p className="text-[11px] text-muted-foreground">
-                  💡 Start typing a username, NGO name, or state to auto-fill credentials. Password for all: <span className="font-mono text-primary font-medium">ngo@123</span>
-                </p>
+                {DEMO_MODE_ENABLED && (
+                  <p className="text-[11px] text-muted-foreground">
+                    Start typing a username, NGO name, or state to auto-fill demo credentials.
+                  </p>
+                )}
 
                 <Button
                   onClick={handleLogin}

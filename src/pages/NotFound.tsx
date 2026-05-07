@@ -1,14 +1,6 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import { pageStyles, typography } from "@/lib/design-system";
 
 const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
-  }, [location.pathname]);
-
   return (
     <div className={`flex items-center justify-center ${pageStyles.wrapper}`}>
       <div className="text-center">

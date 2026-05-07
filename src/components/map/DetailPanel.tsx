@@ -115,7 +115,7 @@ const DetailPanel = ({
             width: 400,
             background:
               "linear-gradient(180deg, hsl(20,25%,12%) 0%, hsl(20,18%,8%) 100%)",
-            borderColor: "hsl(25,30%,20%)",
+            borderColor: "hsl(0,0%,11%)",
           }}
         >
           {/* Close */}
@@ -166,13 +166,13 @@ const DetailPanel = ({
                 label: "Pollutant",
                 value: point.pollutant,
                 icon: Wind,
-                colour: "hsl(25,95%,53%)",
+                colour: "hsl(140,45%,38%)",
               },
               {
                 label: "State",
                 value: point.state,
                 icon: MapPin,
-                colour: "hsl(345,65%,47%)",
+                colour: "hsl(140,45%,38%)",
               },
               {
                 label: "Severity",
@@ -234,7 +234,7 @@ const DetailPanel = ({
                         className="w-7 h-7 rounded-lg shrink-0 flex items-center justify-center"
                         style={{
                           background:
-                            "linear-gradient(135deg, hsl(25,95%,53%), hsl(345,65%,47%))",
+                            "linear-gradient(135deg, hsl(140,45%,38%), hsl(140,45%,38%))",
                         }}
                       >
                         <Building2 className="w-3.5 h-3.5 text-white" />
@@ -254,8 +254,8 @@ const DetailPanel = ({
                           key={f}
                           className="px-2 py-0.5 rounded-full text-[9px] font-bold"
                           style={{
-                            background: "hsl(25,95%,53%,0.12)",
-                            color: "hsl(25,95%,65%)",
+                            background: "hsl(140,45%,38%,0.12)",
+                            color: "hsl(140,55%,68%)",
                           }}
                         >
                           {f}
@@ -267,7 +267,7 @@ const DetailPanel = ({
                         <a
                           href={`tel:${ngo.contact}`}
                           className="flex items-center gap-1 text-[10px] font-semibold"
-                          style={{ color: "hsl(25,95%,60%)" }}
+                          style={{ color: "hsl(140,55%,58%)" }}
                         >
                           <Phone className="w-3 h-3" />
                           {ngo.contact}
@@ -300,7 +300,7 @@ const DetailPanel = ({
                     animate={{ rotate: aiLoading ? 360 : 0 }}
                     transition={{ duration: 2, repeat: aiLoading ? Infinity : 0, ease: "linear" }}
                   >
-                    <Sparkles className="w-4 h-4" style={{ color: "hsl(25,95%,60%)" }} />
+                    <Sparkles className="w-4 h-4" style={{ color: "hsl(140,55%,58%)" }} />
                   </motion.div>
                   <span className="text-[10px] font-extrabold tracking-widest uppercase text-white/40">
                     AI Suggestions
@@ -313,8 +313,8 @@ const DetailPanel = ({
                   className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[10px] font-bold text-white transition-all duration-200 disabled:opacity-50"
                   style={{
                     background:
-                      "linear-gradient(135deg, hsl(25,95%,53%), hsl(345,65%,47%))",
-                    boxShadow: "0 4px 16px hsl(25,95%,53%,0.20)",
+                      "linear-gradient(135deg, hsl(140,45%,38%), hsl(140,45%,38%))",
+                    boxShadow: "0 4px 16px hsl(140,45%,38%,0.20)",
                   }}
                 >
                   {aiLoading ? (
@@ -351,7 +351,7 @@ const DetailPanel = ({
                         >
                           <Sparkles
                             className="w-3 h-3 mt-0.5 shrink-0"
-                            style={{ color: "hsl(25,95%,60%)" }}
+                            style={{ color: "hsl(140,55%,58%)" }}
                           />
                           <p className="text-[11px] text-white/65 leading-relaxed font-medium">
                             {suggestion}
