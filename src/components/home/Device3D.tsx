@@ -3,7 +3,7 @@ import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import { RoundedBox, Text } from "@react-three/drei";
 import * as THREE from "three";
 
-export type DevicePart = "display" | "filter" | "outlet" | "sensor" | "power" | "battery";
+export type DevicePart = "display" | "filter" | "outlet" | "inlet" | "sensor" | "power" | "battery";
 
 interface Device3DProps {
   selectedPart: DevicePart | null;
@@ -138,37 +138,70 @@ const Device3D = ({ selectedPart, onSelectPart }: Device3DProps) => {
         ))}
       </Part>
 
-      {/* ───────── Bottom cap — INTAKE / 3-stage filter (clickable) ───────── */}
-      <Part partKey="filter" selectedPart={selectedPart} onSelectPart={onSelectPart} position={[0, -0.78, 0]}>
-        <RoundedBox args={[0.66, 0.14, 0.43]} radius={0.08} smoothness={4}>
+      {/* ───────── Bottom cap — INLET (mirror of outlet) ───────── */}
+      <Part partKey="inlet" selectedPart={selectedPart} onSelectPart={onSelectPart} position={[0, -0.78, 0]}>
+        <RoundedBox args={[0.62, 0.12, 0.4]} radius={0.08} smoothness={4}>
           <meshPhysicalMaterial
-            color={selectedPart === "filter" ? "#1e3a8a" : "#1e293b"}
-            metalness={0.7}
-            roughness={0.35}
-            emissive={selectedPart === "filter" ? "#22c55e" : "#000000"}
-            emissiveIntensity={selectedPart === "filter" ? 0.5 : 0}
+            color="#1f2937"
+            metalness={0.85}
+            roughness={0.25}
+            emissive={selectedPart === "inlet" ? "#22c55e" : "#000000"}
+            emissiveIntensity={selectedPart === "inlet" ? 0.5 : 0}
           />
         </RoundedBox>
-        {/* Hex-grid intake holes — face downward */}
-        {[-0.18, -0.09, 0, 0.09, 0.18].map((x) =>
-          [-0.13, -0.04, 0.05, 0.14].map((z) => (
-            <mesh key={`${x}-${z}`} position={[x, -0.071, z]} rotation={[0, 0, 0]}>
-              <cylinderGeometry args={[0.022, 0.022, 0.012, 6]} />
-              <meshPhysicalMaterial color="#0f172a" metalness={0.6} roughness={0.6} />
-            </mesh>
-          )),
-        )}
-        {/* Filter ring indicator — glows green when clean */}
-        <mesh position={[0, -0.075, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[0.24, 0.005, 16, 64]} />
-          <meshStandardMaterial
-            color="#22c55e"
-            emissive="#22c55e"
-            emissiveIntensity={selectedPart === "filter" ? 2 : 0.8}
-            transparent
-            opacity={0.7}
+        {/* Vent slots — face downward */}
+        {[-0.18, -0.06, 0.06, 0.18].map((x) => (
+          <mesh key={x} position={[x, -0.061, 0]}>
+            <boxGeometry args={[0.04, 0.012, 0.22]} />
+            <meshStandardMaterial color="#0f172a" />
+          </mesh>
+        ))}
+        {/* Inflow arrows — air drawn upward into device */}
+        {[-0.12, 0, 0.12].map((x) => (
+          <mesh key={`arrow-${x}`} position={[x, -0.07, 0.16]} rotation={[-Math.PI / 4, 0, 0]}>
+            <boxGeometry args={[0.025, 0.002, 0.025]} />
+            <meshStandardMaterial color={selectedPart === "inlet" ? "#22c55e" : "#475569"} emissive={selectedPart === "inlet" ? "#22c55e" : "#000"} emissiveIntensity={selectedPart === "inlet" ? 1.5 : 0} />
+          </mesh>
+        ))}
+      </Part>
+
+      {/* ───────── Middle — 3-Stage Filter Cartridge (clickable) ───────── */}
+      <Part partKey="filter" selectedPart={selectedPart} onSelectPart={onSelectPart} position={[0, 0.02, 0.215]}>
+        {/* Cartridge frame */}
+        <RoundedBox args={[0.5, 0.22, 0.018]} radius={0.03} smoothness={4}>
+          <meshPhysicalMaterial
+            color={selectedPart === "filter" ? "#0f3a2a" : "#0f172a"}
+            metalness={0.5}
+            roughness={0.4}
+            emissive={selectedPart === "filter" ? "#22c55e" : "#000000"}
+            emissiveIntensity={selectedPart === "filter" ? 0.45 : 0}
           />
+        </RoundedBox>
+        {/* Pull tab indicator on right side — suggests removability */}
+        <mesh position={[0.235, 0, 0.012]}>
+          <boxGeometry args={[0.022, 0.06, 0.006]} />
+          <meshStandardMaterial color="#475569" />
         </mesh>
+        {/* 3 stage stripes — pre-filter, HEPA, activated carbon */}
+        {[
+          { y: 0.06, color: "#94a3b8" },  // Pre-filter (gray)
+          { y: 0.00, color: "#f1f5f9" },  // HEPA (white)
+          { y: -0.06, color: "#1f2937" }, // Activated carbon (dark)
+        ].map(({ y, color }, i) => (
+          <RoundedBox key={i} args={[0.42, 0.04, 0.008]} position={[0, y, 0.012]} radius={0.005}>
+            <meshPhysicalMaterial
+              color={color}
+              metalness={0.3}
+              roughness={0.6}
+              emissive={selectedPart === "filter" ? "#22c55e" : "#000"}
+              emissiveIntensity={selectedPart === "filter" ? 0.45 : 0}
+            />
+          </RoundedBox>
+        ))}
+        {/* Stage labels */}
+        <Text position={[-0.16, 0.06, 0.018]} fontSize={0.022} color={selectedPart === "filter" ? "#86efac" : "#64748b"} anchorX="left" anchorY="middle">PRE</Text>
+        <Text position={[-0.16, 0, 0.018]} fontSize={0.022} color={selectedPart === "filter" ? "#86efac" : "#475569"} anchorX="left" anchorY="middle">HEPA</Text>
+        <Text position={[-0.16, -0.06, 0.018]} fontSize={0.022} color={selectedPart === "filter" ? "#86efac" : "#64748b"} anchorX="left" anchorY="middle">CARBON</Text>
       </Part>
 
       {/* ───────── Back panel — BATTERY + USB-C (clickable) ───────── */}
@@ -219,8 +252,8 @@ const Device3D = ({ selectedPart, onSelectPart }: Device3DProps) => {
       </Part>
 
       {/* ───────── OLED Display (clickable) ───────── */}
-      <Part partKey="display" selectedPart={selectedPart} onSelectPart={onSelectPart} position={[0, 0.32, 0.215]}>
-        <RoundedBox args={[0.42, 0.34, 0.015]} radius={0.04} smoothness={4}>
+      <Part partKey="display" selectedPart={selectedPart} onSelectPart={onSelectPart} position={[0, 0.42, 0.215]}>
+        <RoundedBox args={[0.42, 0.30, 0.015]} radius={0.04} smoothness={4}>
           <meshPhysicalMaterial
             color="#0a0e27"
             metalness={0.9}
@@ -260,7 +293,7 @@ const Device3D = ({ selectedPart, onSelectPart }: Device3DProps) => {
       </Part>
 
       {/* ───────── Power button (clickable) ───────── */}
-      <Part partKey="power" selectedPart={selectedPart} onSelectPart={onSelectPart} position={[0, -0.18, 0.215]}>
+      <Part partKey="power" selectedPart={selectedPart} onSelectPart={onSelectPart} position={[0, -0.30, 0.215]}>
         <mesh>
           <cylinderGeometry args={[0.07, 0.07, 0.015, 32]} />
           <meshPhysicalMaterial
@@ -314,11 +347,11 @@ const Device3D = ({ selectedPart, onSelectPart }: Device3DProps) => {
       ))}
 
       {/* ───────── Brand strip ───────── */}
-      <RoundedBox args={[0.22, 0.06, 0.008]} position={[0, -0.45, 0.215]} radius={0.01}>
+      <RoundedBox args={[0.22, 0.06, 0.008]} position={[0, -0.55, 0.215]} radius={0.01}>
         <meshPhysicalMaterial color="#0f172a" metalness={0.6} roughness={0.4} />
       </RoundedBox>
       <Text
-        position={[0, -0.45, 0.222]}
+        position={[0, -0.55, 0.222]}
         fontSize={0.038}
         color="#86efac"
         anchorX="center"

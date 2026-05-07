@@ -42,7 +42,7 @@ const PART_INFO: Record<DevicePart, { title: string; subtitle: string; icon: typ
     subtitle: "Pre-filter → HEPA H13 → Activated Carbon",
     icon: Shield,
     description:
-      "Air is drawn in through hundreds of micro-perforations. The pre-filter catches dust, the HEPA H13 layer captures PM2.5/PM10 at 99.97% efficiency, and the activated carbon stage absorbs VOCs and odour molecules.",
+      "Replaceable cartridge sits in the middle of the device. Air pulled in by the inlet passes through the pre-filter (dust), then HEPA H13 (PM2.5/PM10 at 99.97%), then activated carbon (VOCs and odour) before exiting the outlet.",
     spec: "HEPA H13 · 99.97% @ 0.3μm · 6-month life",
   },
   outlet: {
@@ -52,6 +52,14 @@ const PART_INFO: Record<DevicePart, { title: string; subtitle: string; icon: typ
     description:
       "A brushless DC fan pushes filtered air upward through directional vents. Engineered for under 28 dB at the lowest setting — quieter than a library.",
     spec: "Brushless DC · 28–48 dB · 5 fan speeds",
+  },
+  inlet: {
+    title: "Whisper Inlet",
+    subtitle: "Bottom-mounted air intake",
+    icon: Wind,
+    description:
+      "Polluted air is drawn in through the matching bottom vents. Same low-noise engineering as the outlet — symmetric design keeps airflow balanced and unobstructive.",
+    spec: "Bottom intake · matched to outlet flow",
   },
   sensor: {
     title: "Multi-Gas Sensor",
